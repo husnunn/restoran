@@ -1,0 +1,52 @@
+<link rel="stylesheet" href="halaman/menumakanan/css/cart.css">
+<div class="menu">
+    <div class="container-fluid p-0">
+      <div class="d-flex">
+        <div class="kiri">
+          <table class="table table-striped table-bordered">
+            <thead>
+              <th>No</th>
+              <th>Nama Menu</th>
+              <th>Harga</th>
+              <th>Aksi</th>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="kanan">
+          <div class="card rounded-0 shadow">
+            <div class="card-body">
+              <div id="cart"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="halaman/menumakanan/js/jQuery.SimpleCart.js"></script>
+  <script>
+    
+    $.ajax({
+      type: "GET",
+      url: "https://informatikaunwaha.com/restaurant/api_faris/api_getmenu.php",
+      dataType: "json",
+      success: function (response) {
+        $.each(response, function (indexInArray, vale) {
+          $("tbody").append(`
+            <tr>
+              <td>${indexInArray + 1}</td>
+              <td>${vale.nama_makanan}</td>
+              <td>Rp.${ new Intl.NumberFormat().format(vale.harga)}</td>
+              <td>
+                <button class="btn btn-primary btn-sm sc-add-to-cart" data-name="${vale.nama_makanan}" data-price="${vale.harga}" type="submit">Tambahkan</button>
+              </td>
+            </tr>          
+        
+        `);
+        });
+
+        $("#cart").simpleCart();
+      },
+    });
+  </script>
