@@ -1,0 +1,133 @@
+<h2>Saran</h2>
+
+<div class="card">
+  <div class="card-header d-flex align-ites-center">
+    <a href="javascript:void(0)" onclick="tambah_aduan()" id="sidebar-link" class="btn btn-primary">Tambah</a>
+  </div>
+  <div class="card-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Tanggal</th>
+          <th scope="col">Isi</th>
+          <th scope="col">Status</th>
+          <th scope="col">Aksi</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalId" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitleId">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="mb-3">
+            <label class="form-label">Komplain</label>
+            <input type="text" name="" id="saran" class="form-control" placeholder="" aria-describedby="helpId" />
+            <input type="hidden" name="" id="idsaran" class="form-control" placeholder="" aria-describedby="helpId" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Tindakan</label>
+            <select name="" class="form-control form-select" id="sts">
+              <option value="0">Belum Ditangani</option>
+              <option value="1">Sudah Ditangani</option>
+              <option value="2">Di Pertimbangkan</option>
+              <option value="3">Di Tolak</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="tutup()">Close</button>
+        <button type="button" class="btn btn-primary" onclick="tutup()">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="halaman/baihaqi/js/baihaqi.js"></script>
+
+<script>
+  $(document).ready(function () {
+    ambil_laporan(2);
+  });
+
+  function edit(element) {
+    $("#modalId").modal("show");
+    var row = $(element).closest("tr");
+    var datapValue = row.find("td[datap]").attr("datap");
+
+    $("#saran").val(datapValue);
+    $("#idsaran").val(row.find("td[dataid]").attr("dataid"));
+  }
+
+  function tutup() {
+    var datapValue = $("#saran").val();
+    var datapId = $("#idsaran").val();
+
+    var sts = $("#sts").val();
+
+    d = {
+      status: sts,
+      ket: datapValue,
+      id: datapId,
+    };
+
+    edit_data(d, 2);
+    $("#modalId").modal("hide");
+  }
+
+  function sukses(icons, pesan) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "bottom-end",
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
+    });
+    Toast.fire({
+      icon: icons,
+      title: pesan,
+    });
+  }
+
+  function confirm_delete(elemen) {
+    console.log($(elemen).attr("idp"));
+    Swal.fire({
+      title: "Konfirmasi",
+      text: "Yakin ingin menghapus data ini ?",
+      icon: "question",
+      confirmButtonText: "Oke",
+      showCancelButton: true,
+      cancelButtonText: "Batal",
+    }).then((result) => {
+      if (result["isConfirmed"]) {
+        $.ajax({
+          type: "GET",
+          url: "https://tugasapi.informatikaunwaha.com/baihaqi/api/apihapus.php",
+          data: {
+            id: $(elemen).attr("idp"),
+          },
+          dataType: "JSON",
+          success: function (response) {
+            sukses("success", "Berhasil Menghapus");
+            $("tbody").empty();
+            ambil_laporan(2);
+          },
+        });
+      }
+    });
+  }
+</script>

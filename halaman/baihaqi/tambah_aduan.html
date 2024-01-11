@@ -1,0 +1,35 @@
+<h2>Form Komplain & Saran</h2>
+
+<div class="form-group mb-3">
+  <label class="mb-2" for="kategori">Kategori </label>
+  <select class="form-control" id="jenis" name="jenis" required>
+    <option value="2">Saran</option>
+    <option value="1">Komplain</option>
+  </select>
+</div>
+
+<div class="form-group mb-3">
+  <label class="mb-2" for="aduan">Aduan:</label>
+  <textarea class="form-control" id="keterangan" name="keterangan" rows="4" required></textarea>
+</div>
+
+<button type="submit" onclick="simpan()" class="btn btn-primary">Submit Aduan</button>
+
+<script>
+  function simpan() {
+    Swal.fire({
+      title: "Konfirmasi",
+      text: "Apakah Sudah Benar Informasi Yang Di berikan ?",
+      icon: "question",
+      confirmButtonText: "Oke",
+      showCancelButton: true,
+      cancelButtonText: "Batal",
+    }).then((result) => {
+      if (result["isConfirmed"]) {
+        tambah();
+      }
+    });
+  }
+</script>
+
+<script src="halaman/baihaqi/js/baihaqi.js"></script>
