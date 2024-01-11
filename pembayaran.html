@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Purple Admin</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="assets/images/favicon.ico" />
+
+    <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css" />
+    
+  </head>
+  <body>
+    <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a class="navbar-brand brand-logo" href="index.html">RESTORAN</a>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-stretch">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+          <span class="mdi mdi-menu"></span>
+        </button>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+          <span class="mdi mdi-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">
+              <span class="menu-title">Menu</span>
+              <i class="mdi mdi-tag-outline menu-icon"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"  href="pembayaran.html" >
+              <span class="menu-title">Pembayaran</span>
+              <i class="mdi mdi-square-inc-cash menu-icon"></i>
+            </a>
+            
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"  href="pesanan.html" >
+              <span class="menu-title">pesanan</span>
+              <i class="mdi mdi-square-inc-cash menu-icon"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="voucher.html">
+              <span class="menu-title">voucher</span>
+              <i class="mdi mdi-contacts menu-icon"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- form pembayaran  -->
+
+      <div class="container mt-5">
+        <form action="" method="post">
+            <div class="mb-3">
+              <label for="" class="form-label">tanggal pembayaran</label>
+              <input type="date" name="" id="">
+            </div>
+            <div class="mb-3">
+              <label for="" class="form-label">id pesanan</label>
+              <input type="number" class="form-control" value="033"  disabled aria-describedby="helpId">
+            </div>
+            <div class="mb-3">
+                <label for="" class="form-label">Nomor Meja</label>
+                <input type="number" class="form-control" value="08"  disabled aria-describedby="helpId">
+            </div>
+            <div class="mb-3">
+              <label for="" class="form-label">Atas Nama</label>
+              <input type="text"
+                class="form-control" name="" id="" disabled aria-describedby="helpId" value="Pak Rian">
+            </div>
+            <div class="mb-3">
+              <div class="row">
+                <table class="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th scope="col">id</th>
+                      <th scope="col">Menu</th>
+                      <th scope="col">Harga</th>
+                      <th scope="col">Jumlah</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">1</th>
+                      <td>Nasi Goreng</td>
+                      <td>15.00</td>
+                      <td>1</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">2</th>
+                      <td>Mie Goreng</td>
+                      <td>15.00</td>
+                      <td>2</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">3</th>
+                      <td>Es jeruk</td>
+                      <td>10.00</td>
+                      <td>2</td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+            </div>
+
+              <div class="mb-3">
+                <label for="" class="form-label">Total Pembayaran :</label>
+                <input type="text"
+                  class="form-control" disabled aria-describedby="helpId" value="60.000">
+              </div>
+
+              
+              <div class="form-group mb-3">
+                <label for="inputState">Pilih Voucher</label>
+                <select id="inputState" class="form-control">
+                  <option selected disabled>Choose...</option>
+                  <option>Voucher Agustus</option>
+                  <option>Voucher Natal</option>
+                </select>
+              </div>
+
+              <div class="form-group ">
+                <label for="inputState">Pilih Metode Pembayaran</label>
+                <select id="inputState" class="form-control">
+                  <option selected disabled>Choose...</option>
+                  <option>Transfer Bank</option>
+                  <option>DANA</option>
+                  <option>Gopay</option>
+                  <option>Cash</option>
+                </select>
+              </div>
+            </form>
+            <button class="btn btn-primary" onclick="sukses()">Submit</button>
+
+    </div>
+
+
+    
+        <!-- Script for handling voucher claiming -->
+        <script>
+          function sukses() {
+            swal("Sukses!", "Pembayaran Berhasil!", "success");
+          }
+      </script>
+  </body>
+</html>
