@@ -22,6 +22,7 @@
           <th>No</th>
           <th>Nama Menu</th>
           <th>Harga</th>
+          <th>Status</th>
           <th style="width: 10%">Aksi</th>
         </thead>
         <tbody></tbody>
@@ -40,6 +41,17 @@
 <script src="halaman/menumakanan/js/jQuery.SimpleCart.js"></script>
 <script>
  
+ function cek_status_menu(status) { 
+
+  if(status=='Empty'){
+    var element=`disabled='true'`
+    return element
+  }else{
+    var element=`disabled='false'`
+  }
+  
+
+  }
   
 
   $.ajax({
@@ -53,11 +65,11 @@
               <td>${indexInArray + 1}</td>
               <td>${vale.nama_makanan}</td>
               <td>Rp.${new Intl.NumberFormat().format(vale.harga)}</td>
+              <td>${vale.status}</td>
               <td>
-                <button class="btn btn-success btn-sm sc-add-to-cart" data-name="${vale.nama_makanan}" data-price="${vale.harga}" type="submit"><i class='fas fa-plus'></i></button>
+                <button class="btn btn-success btn-sm sc-add-to-cart" ${cek_status_menu(vale.status)} data-name="${vale.nama_makanan}" data-price="${vale.harga}" type="submit"><i class='fas fa-plus'></i></button>
               </td>
             </tr>          
-        
         `);
       });
 
@@ -70,4 +82,3 @@
   });
 </script>
 
-=
