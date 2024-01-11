@@ -63,10 +63,10 @@
   var jenisMenu = "add";
 
   function tampil_modal(elem, jenis) {
-    $("#nama_makanan").val('');
-    $("#harga").val('');
-    $("#status").val('');
-    $("#id").val('');
+    $("#nama_makanan").val("");
+    $("#harga").val("");
+    $("#status").val("");
+    $("#id").val("");
 
     if (jenis == "add") {
       jenisMenu = "add";
@@ -92,6 +92,17 @@
         nama_makanan: $("#nama_makanan").val(),
         harga: $("#harga").val(),
       };
+
+      $.ajax({
+        type: "POST",
+        url: "https://informatikaunwaha.com/restaurant/api_faris/tambah.php",
+        data: dataMenu,
+        dataType: "json",
+        success: function (response) {
+          $("#modalAdd").modal("hide");
+          load_menu();
+        },
+      });
     } else {
       var dataMenu = {
         nama_makanan: $("#nama_makanan").val(),
@@ -99,19 +110,31 @@
         status: $("#status").val(),
         id: $("#id").val(),
       };
+      $.ajax({
+        type: "POST",
+        url: "https://informatikaunwaha.com/restaurant/api_faris/edit_menu.php",
+        data: dataMenu,
+        dataType: "json",
+        success: function (response) {
+          $("#modalAdd").modal("hide");
+          load_menu();
+        },
+      });
     }
 
-    console.log(dataMenu)
+    console.log(dataMenu);
   }
 </script>
 <script>
-  $.ajax({
-    type: "GET",
-    url: "https://informatikaunwaha.com/restaurant/api_faris/api_getmenu.php",
-    dataType: "json",
-    success: function (response) {
-      $.each(response, function (indexInArray, vale) {
-        $("tbody").append(`
+  function load_menu() {
+    $("tbody").html("");
+    $.ajax({
+      type: "GET",
+      url: "https://informatikaunwaha.com/restaurant/api_faris/api_getmenu.php",
+      dataType: "json",
+      success: function (response) {
+        $.each(response, function (indexInArray, vale) {
+          $("tbody").append(`
                <tr>
                  <td>${indexInArray + 1}</td>
                  <td>${vale.nama_makanan}</td>
@@ -123,9 +146,16 @@
                  </td>
                </tr>          
            `);
-      });
+        });
 
-      $(".table").DataTable();
-    },
-  });
+        $(".table").DataTable({
+          lengthMenu: [
+            [20, 50, -1],
+            [20, 50, "All"],
+          ],
+        });
+      },
+    });
+  }
+  load_menu();
 </script>

@@ -73,9 +73,13 @@
         `);
       });
 
-      $(".table").DataTable();
       $("#cart").simpleCart();
-
+      $(".table").DataTable({
+          lengthMenu: [
+            [20,50, -1],
+            [20, 50, "All"],
+          ],
+        });
       var kodeorder='#'+Math.floor(Math.random() * 999999);
   $('#kodeorder').val(kodeorder)
     },
