@@ -1,0 +1,106 @@
+<h1 class="h3 mb-4 text-gray-800" id="judul_halaman">Reservasi</h1>
+<div class="row" id="listmeja"></div>
+<div id="mdkonten"></div>
+
+<script>
+  $("#mdkonten").load("halaman/ajiz/modal.html");
+
+  function load_meja() {
+    $("#listmeja").html("");
+
+    $.ajax({
+      type: "get",
+      url: "https://informatikaunwaha.com/restaurant/api.php",
+      data: {
+        perintah: "tb_meja",
+      },
+      dataType: "json",
+      success: function (response) {
+        console.log(response);
+        $.each(response, function (indexInArray, valueOfElement) {
+          $("#listmeja").append(`
+     
+      <div class="col-sm-3 mb-3">
+        <div class='card ${tambah_class(valueOfElement.status)}' onclick="tampil_form(this)" id="btn_meja" data-harga="${valueOfElement.harga_booking}" data-meja="${valueOfElement.no_meja}" style="cursor:pointer" >
+            <div class='card-body'>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-0">Meja ${valueOfElement.no_meja}</h4>
+                    <p class="mb-0">${valueOfElement.kapasitas} 0rang</p>
+                </div>
+                ${cek(valueOfElement.status)}
+            </div>
+            </div>
+            </div>
+        </div>
+     
+     `);
+        });
+      },
+    });
+  }
+
+  load_meja();
+  function cek(status) {
+    var status_A = ` <span class="badge bg-danger text-white">Booked</span>`;
+    var status_B = ` <span class="badge bg-success text-white">Ready</span>`;
+    var hasil = "";
+
+    if (status == 0) {
+      hasil = status_B;
+    } else {
+      hasil = status_A;
+    }
+    return hasil;
+  }
+
+  function tambah_class(status) {
+    var status_A = `booked`;
+    var status_B = ``;
+    var hasil = "";
+
+    if (status == 0) {
+      hasil = status_B;
+    } else {
+      hasil = status_A;
+    }
+    return hasil;
+  }
+
+  function tampil_form(element) {
+    console.log($(element).attr("data-meja"));
+
+   
+
+    if ($(element).hasClass("booked")) {
+    } else {
+      $("#modalId").modal("show");
+
+      $("#mejanomor").val($(element).attr("data-meja"));
+      $("#harga").val($(element).attr("data-harga"));
+    }
+  }
+</script>
+
+<script>
+  function simpan_book() {
+    var databooking = {
+      nama: $("#nama").val(),
+      no_table: $("#meja").val(),
+      tanggal: $("#tanggal").val(),
+      waktu: $("#waktu").val(),
+      harga_booking: $("#harga").val(),
+      uang_muka: $("#uangmuka").val(),
+    };
+    $.ajax({
+      type: "POST",
+      url: "https://informatikaunwaha.com/restaurant/booking.php",
+      data: databooking,
+      dataType: "JSON",
+      success: function (response) {
+        $("#modalId").modal("hide");
+        load_meja();
+      },
+    });
+  }
+</script>

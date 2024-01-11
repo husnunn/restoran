@@ -1,0 +1,20 @@
+.navbar-bg,
+body[data-theme="dark"] .navbar-bg {
+  background-color: #29394b !important;
+}
+
+body[data-theme="default"] .navbar-bg {
+  background: linear-gradient(90deg, hsla(0, 0%, 100%, 0.5), #fff 3%, #fff) !important;
+}
+body[data-theme="light"] .navbar-bg {
+  background: linear-gradient(90deg, hsla(0, 0%, 100%, 0.5), #fff 3%, #fff) !important;
+}
+body[data-theme="colored"] .navbar-bg {
+  background: #fff !important;
+}
+body[data-theme="colored"] footer.footer {
+  background: #fff !important;
+}
+body[data-theme="dark"] footer.footer {
+  background: #19222c !important;
+}

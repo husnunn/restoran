@@ -1,0 +1,4 @@
+.sidebar-dropdown .sidebar-link:before {
+  content: "-"!important;
+  
+}

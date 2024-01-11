@@ -1,0 +1,55 @@
+.navbar-bg,
+body[data-theme="dark"] .navbar-bg {
+  background-color: #29394b !important;
+}
+
+body[data-theme="default"] .navbar-bg {
+  background: linear-gradient(90deg, hsla(0, 0%, 100%, 0.5), #fff 3%, #fff) !important;
+}
+body[data-theme="light"] .navbar-bg {
+  background: linear-gradient(90deg, #f5f5f5, #fff 3%, #fff) !important;
+}
+body[data-theme="colored"] .navbar-bg {
+  background: #fff !important;
+}
+body[data-theme="colored"] footer.footer {
+  background: #fff !important;
+}
+body[data-theme="dark"] footer.footer {
+  background: #19222c !important;
+}
+body[data-theme="dark"] .sidebar-item.active .sidebar-link:hover,
+body[data-theme="dark"] .sidebar-item.active > .sidebar-link,
+body[data-theme="light"] .sidebar-item.active .sidebar-link:hover,
+body[data-theme="light"] .sidebar-item.active > .sidebar-link {
+  border-left-color: #ff0474;
+  color: rgb(255, 0, 0);
+}
+
+body[data-theme="light"] .sidebar-item.active .sidebar-link:hover i,
+body[data-theme="light"] .sidebar-item.active .sidebar-link:hover svg,
+body[data-theme="light"] .sidebar-item.active > .sidebar-link i,
+body[data-theme="light"] .sidebar-item.active > .sidebar-link svg {
+  color: #ff0000;
+}
+.sidebar-link:hover,
+body[data-theme="dark"] .sidebar-item.active > .sidebar-link,
+body[data-theme="light"] .sidebar-item.active .sidebar-link:hover,
+body[data-theme="light"] .sidebar-item.active > .sidebar-link {
+  border-left-color: #ff0474;
+  color: rgb(255, 0, 0);
+}
+
+body[data-theme="light"] .sidebar-item:hover .sidebar-link:hover i,
+body[data-theme="light"] .sidebar-item:hover .sidebar-link:hover svg,
+body[data-theme="light"] .sidebar-item:hover > .sidebar-link i,
+body[data-theme="light"] .sidebar-item:hover > .sidebar-link svg {
+  color: #ff0000;
+}
+.sidebar-item:hover .sidebar-link:hover{
+  color: #ff0000;
+}
+a:hover{
+  color: #ff0000!important;
+
+}

@@ -1,0 +1,160 @@
+<h2>Data Booking</h2>
+<table class="table table-striped" id="bookingTable">
+  <thead>
+    <tr>
+      <th scope="col">No</th>
+      <th scope="col">Nama</th>
+      <th scope="col">Meja</th>
+      <th scope="col">Tanggal</th>
+      <th scope="col">Waktu</th>
+      <th scope="col">Harga</th>
+      <th scope="col">DP</th>
+      <th scope="col">Aksi</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+
+<div id="mdkonten"></div>
+<script>
+  var idsku = 0;
+  function cek_status(status_booking, meja, id) {
+    var el = ``;
+    if (status_booking == "0") {
+      el = `<a class="btn btn-sm btn-success" data-meja='${meja}' data-id="${id}" onclick="update_status(this)" href="javascript:void(0)">Akhiri</a>`;
+    } else {
+      el = `<a class="btn btn-sm btn-secondary disabled"  data-meja='${meja}' data-id="${id}" href="javascript:void(0)">Done</a>`;
+    }
+    return el;
+  }
+  function load_data() {
+    $("#tbody").html("");
+    var nomor = 0;
+
+    $.ajax({
+      type: "get",
+      url: "https://informatikaunwaha.com/restaurant/api.php",
+      data: {
+        perintah: "tb_restoran",
+      },
+      dataType: "json",
+      success: function (response) {
+        console.log(response);
+        var ids = 0;
+        $.each(response, function (indexInArray, valueOfElement) {
+          ids = valueOfElement.status_booking;
+          $("#tbody").append(
+            `
+              <tr>
+    <th scope="row">${indexInArray + 1}</th>
+    <td>${valueOfElement.nama}</td>
+    <td>${valueOfElement.no_table}</td>
+    <td>${valueOfElement.tanggal}</td>
+    <td>${valueOfElement.waktu}</td>
+    <td>Rp.${valueOfElement.harga_booking}</td>
+    <td>Rp.${valueOfElement.uang_muka}</td>
+    <td>
+      
+        ${cek_status(ids, valueOfElement.no_table, valueOfElement.id_table)}
+        
+
+      <a class="btn btn-sm btn-primary" data-meja='${valueOfElement.no_table}' data-id="${valueOfElement.id_table}" href="javascript:void(0)" onclick="ambil_data(${valueOfElement.id_table})">Edit</a>
+      <a class="btn btn-sm btn-danger" onclick="hapus_data(${valueOfElement.id_table})" data-meja='${valueOfElement.no_table}'  data-id="${valueOfElement.id_table}" href="javascript:void(0)">Del</a>
+    </td>
+
+    </tr>
+              `
+          );
+        });
+        $("#bookingTable").DataTable();
+      },
+    });
+  }
+
+  function update_status(element) {
+    var id_book = $(element).attr("data-id");
+    var meja = $(element).attr("data-meja");
+
+    var dataku = {
+      idbooking: id_book,
+      no_table: meja,
+    };
+    console.log(dataku);
+
+    $.ajax({
+      type: "POST",
+      url: "https://informatikaunwaha.com/restaurant/updatebooking.php",
+      data: dataku,
+      dataType: "JSON",
+      success: function (response) {
+        console.log(response);
+        load_data();
+      },
+    });
+  }
+
+  load_data();
+  $("#mdkonten").load("halaman/ajiz/modal.html");
+
+  function ambil_data(ids) {
+    idsku = ids;
+    $("#modalId").modal("show");
+    $.ajax({
+      type: "get",
+      url: "https://informatikaunwaha.com/restaurant/ambil_edit.php",
+      data: {
+        id: ids,
+      },
+      dataType: "json",
+      success: function (response) {
+        var dt = response;
+
+        $("#nama").val(dt[0].nama);
+        $("#mejanomor").val(dt[0].no_table);
+        $("#harga").val(dt[0].harga_booking);
+        $("#tanggal").val(dt[0].tanggal);
+        $("#waktu").val(dt[0].waktu);
+        $("#uangmuka").val(dt[0].uang_muka);
+      },
+    });
+  }
+
+  function hapus_data(ids) {
+    idsku = ids;
+    $.ajax({
+      type: "get",
+      url: "https://informatikaunwaha.com/restaurant/hapusbooking.php",
+      data: {
+        id: ids,
+      },
+      dataType: "json",
+      success: function (response) {
+        load_data();
+      },
+    });
+  }
+</script>
+
+<script>
+  function simpan_book() {
+    var databooking = {
+      id: idsku,
+      nama: $("#nama").val(),
+      no_table: $("#meja").val(),
+      tanggal: $("#tanggal").val(),
+      waktu: $("#waktu").val(),
+      harga_booking: $("#harga").val(),
+      uang_muka: $("#uangmuka").val(),
+    };
+    $.ajax({
+      type: "POST",
+      url: "https://informatikaunwaha.com/restaurant/update_databooking.php",
+      data: databooking,
+      dataType: "JSON",
+      success: function (response) {
+        $("#modalId").modal("hide");
+        load_data();
+      },
+    });
+  }
+</script>

@@ -1,0 +1,49 @@
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title display-5 mb-4">Tambah Meja Baru</h2>
+    <div class="mb-3">
+      <label for="" class="form-label">Nomor Meja</label>
+      <input type="number" class="form-control" id="nomormeja" placeholder="Contoh : 6" />
+    </div>
+    <div class="mb-3">
+      <label for="" class="form-label">Kapasita Meja</label>
+      <input type="number" class="form-control" id="kapasitas" placeholder="" min="1" />
+    </div>
+    <div class="mb-3">
+      <label for="" class="form-label">Harga Booking</label>
+      <input type="number" class="form-control" id="harga" />
+    </div>
+
+    <button class="float-end btn btn-success">Simpan</button>
+  </div>
+</div>
+
+<script>
+
+$('body').
+
+
+  $("button").click(function () {
+    var dataMeja = {
+      nomormeja: $("#nomormeja").val(),
+      kapasitas: $("#kapasitas").val(),
+      hargabook: $("#harga").val(),
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "https://informatikaunwaha.com/restaurant/add_meja.php",
+      data: dataMeja,
+      dataType: "JSON",
+      success: function (response) {
+        if (response.status == "sukses") {
+          alert("Sukses");
+
+          $("#nomormeja").val("");
+          $("#kapasitas").val("");
+          $("#harga").val("");
+        }
+      },
+    });
+  });
+</script>

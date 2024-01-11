@@ -1,0 +1,103 @@
+<table class="table table-striped">
+  <thead>
+    <th>no meja</th>
+    <th>kapasitas</th>
+    <th>harga booking</th>
+    <th>status</th>
+    <th>aksi</th>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+
+<div id="tempatModal"></div>
+
+<script>
+  $("#tempatModal").load("halaman/ajiz/modal-meja.html");
+
+  function cek(status) {
+    var status_A = ` <span class="badge bg-danger text-white">Booked</span>`;
+    var status_B = ` <span class="badge bg-success text-white">Ready</span>`;
+    var hasil = "";
+
+    if (status == 0) {
+      hasil = status_B;
+    } else {
+      hasil = status_A;
+    }
+    return hasil;
+  }
+
+  function load_meja() {
+    $("#tbody").html("");
+
+    $.ajax({
+      type: "get",
+      url: "https://informatikaunwaha.com/restaurant/api.php",
+      data: {
+        perintah: "tb_meja",
+      },
+      dataType: "json",
+      success: function (response) {
+        console.log(response);
+        $.each(response, function (indexInArray, valueOfElement) {
+          $("#tbody").append(`
+     
+      <tr>
+        
+                    <td> ${valueOfElement.no_meja}</td>
+                    <td>${valueOfElement.kapasitas} 0rang</td>
+                    <td>${valueOfElement.harga_booking} </td>
+                    <td>${cek(valueOfElement.status)} </td>
+                    <td>
+                        <button onclick="tampil_modal(this)" class="btn btn-sm btn-primary" data-idmeja="${valueOfElement.id}" data-kapasitas="${valueOfElement.kapasitas}" data-harga="${valueOfElement.harga_booking}" data-nomeja="${valueOfElement.no_meja}">Edit</button>
+                        <button class="btn btn-sm btn-danger" data-idmeja="${valueOfElement.id}" >Hapus</button>
+                    </td>
+                
+        </tr>
+     
+     `);
+        });
+      },
+    });
+  }
+
+  load_meja();
+
+  function tampil_modal(elemen) {
+    idsku = elemen;
+    $("#modalId").modal("show");
+
+    $("#idmeja").val($(elemen).attr("data-idmeja"));
+    $("#nomormeja").val($(elemen).attr("data-nomeja"));
+    $("#harga").val($(elemen).attr("data-harga"));
+    $("#kapasitas").val($(elemen).attr("data-kapasitas"));
+  }
+
+  function simpan_meja() {
+    var dataMeja = {
+      idmeja: $("#idmeja").val(),
+      nomormeja: $("#nomormeja").val(),
+      kapasitas: $("#kapasitas").val(),
+      hargabook: $("#harga").val(),
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "https://informatikaunwaha.com/restaurant/update_meja.php",
+      data: dataMeja,
+      dataType: "JSON",
+      success: function (response) {
+        if (response.status == "sukses") {
+          alert("Sukses");
+          $("#idmeja").val("");
+          $("#nomormeja").val("");
+          $("#kapasitas").val("");
+          $("#harga").val("");
+        }
+        $("#modalId").modal("hide");
+
+        load_meja();
+      },
+    });
+  }
+</script>
