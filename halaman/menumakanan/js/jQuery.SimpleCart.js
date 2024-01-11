@@ -49,17 +49,39 @@
     },
     _setupCart: function () {
       this.cart_ele.addClass("cart-grid panel panel-defaults");
-      this.cart_ele.append("<div class='panel-heading cart-heading  mb-3'><div class='total-cart-count'>Your Cart 0 items</div><div class='spacer'></div><div class='d-flex'><div class='total-cart-costs'></div></div><div></div></div>");
+      this.cart_ele.append(`<div class='panel-heading cart-heading  mb-3'><div class='total-cart-count'>Your Cart 0 items</div>
+      
+      <div class='spacer'></div>
+      
+      <div class="input-group mt-2">
+      <span class="input-group-text" id="basic-addon1">
+      <i class="fas fa-map"></i>
+      </span>
+      <input type="number" class="form-control"  id='mejanomor' style='padding:7px!important;text-align:start'  placeholder="Meja Nomor" >
+      </div>
+
+      <div class='d-flex'><div class='total-cart-costs'></div></div><div></div></div>`);
       this.cart_ele.append("<div class='panel-body cart-body'><div class='cart-products-list' id='show-cart'><!-- Dynamic Code from Script comes here--></div></div>");
       this.cart_ele.append(
         `<div class='cart-summary-container mt-4'>
+
+        
+      
           <div class='cart-offer'></div>
                   <div class='cart-total-amount'>
                   <label class='d-block mt-4 mb-2 fw-bold'>
                   Pakai Kode Voucher
                   </label>
-                  <input type='text' class='form-control fw-bold mb-4' id='voucher'/>
- 
+
+
+                <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">
+                <i class="fas fa-gift"></i>
+
+                </span>
+                <input type="text" class="form-control"  id='voucher' style='padding:7px!important;text-align:start'  placeholder="KODE VOUCHER" aria-label="Username" aria-describedby="basic-addon1">
+                </div>
+
                       <div class='spacer'></div>
                       <div class='d-flex justify-content-between align-items-center'>
                       <div class='fs-5'>Total</div>

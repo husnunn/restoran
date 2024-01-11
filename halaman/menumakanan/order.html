@@ -7,6 +7,12 @@
   .kiri {
     width: 62%;
   }
+  td,th{
+    padding: 7px!important  ;
+  }
+  .cart-each-product{
+    padding: 5px;
+  }
 </style>
 <div class="menu">
   <div class="d-flex">
@@ -48,7 +54,7 @@
               <td>${vale.nama_makanan}</td>
               <td>Rp.${new Intl.NumberFormat().format(vale.harga)}</td>
               <td>
-                <button class="btn btn-primary btn-sm sc-add-to-cart" data-name="${vale.nama_makanan}" data-price="${vale.harga}" type="submit">Tambahkan</button>
+                <button class="btn btn-success btn-sm sc-add-to-cart" data-name="${vale.nama_makanan}" data-price="${vale.harga}" type="submit"><i class='fas fa-plus'></i></button>
               </td>
             </tr>          
         
@@ -57,6 +63,11 @@
 
       $(".table").DataTable();
       $("#cart").simpleCart();
+
+      var kodeorder='#'+Math.floor(Math.random() * 999999);
+  $('#kodeorder').val(kodeorder)
     },
   });
 </script>
+
+=
