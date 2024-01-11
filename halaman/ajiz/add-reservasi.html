@@ -20,7 +20,7 @@
         $.each(response, function (indexInArray, valueOfElement) {
           $("#listmeja").append(`
      
-      <div class="col-sm-3 mb-3">
+      <div class="col-sm-3 mb-1">
         <div class='card ${tambah_class(valueOfElement.status)}' onclick="tampil_form(this)" id="btn_meja" data-harga="${valueOfElement.harga_booking}" data-meja="${valueOfElement.no_meja}" style="cursor:pointer" >
             <div class='card-body'>
             <div class="d-flex justify-content-between align-items-center">
