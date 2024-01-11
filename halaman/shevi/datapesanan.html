@@ -1,0 +1,328 @@
+<!doctype html> 
+<html lang="en"> 
+ 
+<head> 
+ <meta charset="utf-8"> 
+ <meta name="viewport" content="width=device-width, initial-scale=1"> 
+ 
+ <title>Blank</title> 
+ 
+ <!-- Bootstrap --> 
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous"> 
+ <!-- Bootstrap Icon - short-cut(bina-bsicon) --> 
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"> 
+
+ <!-- Datatable --> 
+ <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.13.1/r-2.4.0/datatables.min.css" /> 
+ <!-- Select2 --> 
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" /> 
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" /> 
+ <!-- JQUERY --> 
+ <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script> 
+</head> 
+ 
+<body> 
+ <div class="m-5">
+  <div class="row mt-5">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-head-row">
+            <div class="card-title">Data Pesanan</div>
+            <div class="card-tools">
+              <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modaltambah">Tambah Pesanan</button>&nbsp;
+              <button type="button" class="btn btn-primary" onclick="ambildatatamu()">Refresh Data</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="tbl-api" class="display table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th style="width: 10%">No Meja</th>
+                  <th style="width: 20%">Atas Nama</th>
+                  <th style="width: 20%">Pesanan</th>
+                  <th style="width: 20%">Pembayaran</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Tambah -->
+<div class="modal fade" role="dialog" id="modaltambah">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="font-size: 20px">Tambah Pesanan</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form action="" method="post" id="formTambahpesanan">
+          <div class="row">
+            <div class="form-group col-6"><label>No Meja</label><input type="text" class="form-control" id="no_meja" name="no_meja" style="font-size: 20px" /></div>
+            <div class="form-group col-6"><label>Atas Nama</label><input type="text" class="form-control" id="a_nama" name="a_nama" style="font-size: 20px" /></div>
+            <div class="form-group col-6"><label>Pesanan</label><input type="text" class="form-control" id="pesanan" name="pesanan" style="font-size: 20px" /></div>
+        
+            </div>
+            <div class="form-group col-md-12">
+              <label>Pembayaran</label>
+              <select id="pembayaran" name="pembayaran" class="form-control" style="font-size: 20px">
+                <option value="Cash">Cash</option>
+                <option value="Transfer Bank">Transfer BANK</option>
+                <option value="Dana">Dana</option>
+                <option value="Gopay">Gopay</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button onclick="tambahTamu()" type="button" class="btn btn-primary" id="btnSimpan">Simpan</button>
+            <button type="button" class="btn btn-secondary" onclick="kosongForm()">Reset</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Edit -->
+<div class="modal fade" role="dialog" id="modaledit">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="font-size: 20px">Ganti Pesanan</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form action="" method="get" id="tampiledit">
+          <div class="row">
+            <input type="text" hidden class="form-control" id="id_order" name="id_order" value="" style="font-size: 20px" />
+            <div class="form-group col-6"><label>No meja</label><input type="text" class="form-control" id="no_meja" name="no_meja" value="" style="font-size: 20px" /></div>
+            <div class="form-group col-6"><label>Atas Nama </label><input type="text" class="form-control" id="a_nama" name="a_nama" style="font-size: 20px" /></div>
+            <div class="form-group col-6"><label>Pesanan</label><input type="textO" class="form-control" id="pesanan" name="Pesanan" style="font-size: 20px" /></div>
+            <div class="form-group col-md-12">
+              <label>Pembayaran</label>
+              <select id="pembayaran" name="pembayaran" class="form-control" style="font-size: 20px">
+                <option value="Cash">Cash</option>
+                <option value="Transfer Bank">Transfer BANK</option>
+                <option value="Dana">Dana</option>
+                <option value="Gopay">Gopay</option>
+              </select>
+            </div>
+          </div>
+          
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="updateOrder" class="btn btn-primary" >Update</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    ambildatatamu(); // Memuat data pertama kali
+    $("#tbl-api").DataTable(); // Inisialisasi DataTable
+  });
+</script>
+
+<script>
+  localStorage.halakhir = "datatamu.html|#mndatatamu";
+
+  ambildatatamu();
+  function tambahTamu() {
+    var form =
+            $("#formTambahpesanan").serializeArray();
+
+          var data =
+            JSON.parse(
+              localStorage.getItem("form")
+            ) || [];
+          data.push(form);
+          localStorage.setItem(
+            "form",
+            JSON.stringify(data)
+          );
+
+    // Kirim data ke server menggunakan AJAX
+ if (navigator.onLine) {
+  $.each(data, function (indexInArray, valueOfElement) { 
+       $.ajax({
+      type: "POST",
+      url: "https://tugasapi.informatikaunwaha.com/shevi/api.php/input",
+      dataType: "JSON", // Ganti dengan URL tempat Anda menyimpan fungsi PHP untuk menangani data
+      data: valueOfElement,
+      success: function (response) {
+        // swal({
+        //   title: "Berhasil",
+        //   text: "Data Berhasil Ditambahkan",
+        //   icon: "success",
+        // });
+        localStorage.removeItem('form')
+        console.log(response);
+        console.log(valueOfElement);
+        // Reset form setelah selesai
+        kosongForm();
+      },
+      error: function (error) {
+        console.log("Error: ", error.responseText);
+        swal({
+          title: "Gagal",
+          text: "Terjadi Kesalahan Harap Coba Lagi",
+          icon: "error",
+        });
+      },
+    }); 
+  });
+ }
+  }
+
+
+
+  function ambildatatamu() {
+    $.ajax({
+      type: "GET",
+      url: "https://tugasapi.informatikaunwaha.com/shevi/api.php/all",
+      dataType: "JSON",
+      success: function (data) {
+        // Menghapus semua baris pada tabel
+        // console.log(data);
+
+        $("#tbl-api").DataTable().clear().draw();
+
+        // Mengisi tabel dengan data yang diterima dari server
+        $.each(data.data, function (index, item) {
+          var row = `<tr>
+                      <td>${item.no_meja}</td>
+                      <td>${item.a_nama}</td>
+                      <td>${item.pesanan}</td>
+                      <td>${item.pembayaran}</td>
+                      <td>
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modaledit" id="buttonFormEdit" data-id="${item.id_order}">Edit</button>
+                        <button type="button" class="btn btn-danger" id="hapusOrder" data-id="${item.id_order}">Hapus</button>
+                      </td>
+                    </tr>`;
+          $("#tbl-api").DataTable().row.add($(row)).draw();
+        });
+      },
+      error: function (error) {
+        console.log("Error: ", error);
+        alert("Terjadi kesalahan saat mengambil data. Silakan coba lagi.");
+      },
+    });
+  }
+  
+  function kosongForm() {
+      $("#formTambahpesanan")[0].reset();
+    }
+
+  // Fungsi untuk menampilkan data pada form edit
+    // Lakukan request AJAX untuk mendapatkan data tamu berdasarkan ID
+    // Setelah mendapatkan data, isi form edit dengan data tersebut
+    $("#tbl-api").on("click","#buttonFormEdit",function(){
+      id= $(this).data('id');
+    $.ajax({
+      type: "GET",
+      url: "https://tugasapi.informatikaunwaha.com/shevi/api.php/cari/id_order/eq/"+id,
+      dataType: "JSON",
+      data: { id: $("#tamu").data("id_order") },
+      success: function (data) {
+        // console.log(data);
+
+        $.each(data.data, function (index, element) {
+          $("#modaledit #id_order").val(element.id_order);
+          $("#modaledit #no_meja").val(element.no_meja);
+          $("#modaledit #a_nama").val(element.a_nama);
+          $("#modaledit #pesanan").val(element.pesanan);
+          $("#modaledit #pembayaran").val(element.pembayaran);
+        });
+      },
+      error: function (error) {
+        console.log("Error: ", error);
+        alert("Terjadi kesalahan saat mengambil data. Silakan coba lagi.");
+      },
+    });
+    })
+
+  // HAPUSSS TAMU
+  $("#tbl-api").on("click","#hapusOrder",function(){
+    id = $(this).data('id');
+    // console.log(id);
+    $.ajax({
+        type: "DELETE",
+        url: "https://informatikaunwaha.com/tugasapi.informatikaunwaha.com/shevi/api.php",
+        data: { id: id,kolom:'id_order' },
+        dataType: "JSON",
+        success: function (response) {
+          console.log(response);
+        },
+        error: function (error) {
+          swal({
+            title: "Gagal",
+            text: "Terjadi Kesalahan Harap Coba Lagi",
+            icon: "error",
+          });
+        }
+      });
+  })
+  // UPDATE TAMU
+    $("#updateOrder").on("click", function(event){
+      event.preventDefault();
+      var data = {
+        id_order : $("#modaledit #id_order").val(),
+        no_meja : $("#modaledit #no_meja").val(),
+        a_nama : $("#modaledit #a_nama").val(),
+        pesanan : $("#modaledit #pesanan").val(),
+        pembayaran : $("#modaledit #pembayaran").val(),
+      };
+
+    console.log(data);
+    $.ajax({
+      type: "PUT",
+      url: "https://tugasapi.informatikaunwaha.com/shevi/api.php",
+      contentType: "application/x-www-urlencoded",
+      data: data,
+      success: function (response) {
+        // swal({
+        //   title: "Berhasil",
+        //   text: "Data Berhasil Ditambahkan",
+        //   icon: "success",
+        // });
+        console.log(response);
+      },
+      error: function (error) {
+        console.log("Error: ", error);
+        alert("Terjadi kesalahan. Silakan coba lagi.");
+      },
+    });
+  })
+  
+</script>
+ 
+
+ 
+ 
+ 
+ <!-- Bootstrap --> 
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script> 
+ <!-- Datatable --> 
+ <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/r-2.4.0/datatables.min.js"></script> 
+ <!-- Sweet Alert2 --> 
+ <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+ <!-- Select2 --> 
+ <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script> 
+ 
+ <!-- <script> 
+ $$('#select-field').select2({ 
+ theme: 'bootstrap-5' 
+ }); 
+ </script> --> 
+</body> 
+ 
+</html>
