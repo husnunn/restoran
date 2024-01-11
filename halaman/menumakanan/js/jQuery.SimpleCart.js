@@ -52,26 +52,26 @@
       this.cart_ele.append("<div class='panel-heading cart-heading  mb-3'><div class='total-cart-count'>Your Cart 0 items</div><div class='spacer'></div><div class='d-flex'><div class='total-cart-costs'></div></div><div></div></div>");
       this.cart_ele.append("<div class='panel-body cart-body'><div class='cart-products-list' id='show-cart'><!-- Dynamic Code from Script comes here--></div></div>");
       this.cart_ele.append(
-        "<div class='cart-summary-container mt-4'>\n\
-          <div class='cart-offer'></div>\n\
-                  <div class='cart-total-amount'>\n\
-                      <div></div>\n\
-                      <div class='spacer'></div>\n\
-                      <div class='d-flex justify-content-between align-items-center'>\n\
-                      <div class='fs-5'>Total</div>\n\
-                      <div class='d-flex fw-medium fs-5'>Rp.<div class='total-cart-cost'>0</div></div>\n\
-                      </div></div>\n\
-                      <div class='cart-checkout'>\n\
-                      <label class='d-block mt-4 mb-2 fw-bold'>\n\
-                      Pakai Kode Voucher\n\
-                      </label>\n\
-                      <input type='text' class='form-control fw-bold' id='voucher'>\n\
-                      </input>\n\
-                      <form action='#'>\n\
-                          <button type='submit' class='mt-4 btn btn-primary'>Proceed To Checkout</button>\n\
-                      </form>\n\
-                  </.div>\n\
-            </div>"
+        `<div class='cart-summary-container mt-4'>
+          <div class='cart-offer'></div>
+                  <div class='cart-total-amount'>
+                  <label class='d-block mt-4 mb-2 fw-bold'>
+                  Pakai Kode Voucher
+                  </label>
+                  <input type='text' class='form-control fw-bold mb-4' id='voucher'/>
+ 
+                      <div class='spacer'></div>
+                      <div class='d-flex justify-content-between align-items-center'>
+                      <div class='fs-5'>Total</div>
+                      <div class='d-flex fw-medium fs-5'>Rp.<div class='total-cart-cost'>0</div></div>
+                      </div></div>
+                      <div class='cart-checkout'>
+                      <input type='hidden' class='form-control fw-bold' id='kodeorder'/>
+                      <form action='#'>
+                          <button type='submit' class='mt-4 btn btn-primary'>Proceed To Checkout</button>
+                      </form>
+                  </.div>
+            </div>`
       );
     },
     _addProductstoCart: function () {},
