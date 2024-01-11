@@ -1,0 +1,241 @@
+<div class="card">
+  <div class="card-header">
+    <div class="card-head-row">
+      <div class="card-title">Data Barang</div>
+      <div class="card-tools">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modaltambah">Tambah Data</button>&nbsp;
+        <button type="button" class="btn btn-primary" onclick="ambildatatamu()">Refresh Data</button>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table id="tbl-api" class="display table table-striped table-hover">
+        <thead>
+          <tr>
+            <th >NO</th>
+            <th >Nama Barang</th>
+            <th >Merk</th>
+            <th >Kondisi barang</th>
+            <th >Keterangan</th>
+            <th >Status</th>
+            <th >Operasi</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Tambah -->
+<div class="modal fade" role="dialog" id="modaltambah">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" 20px">Tambah Tamu</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form action="" method="post" id="formTambahtamu">
+          <div class="row">
+            <div class="form-group col-6"><label>Nama Barang</label><input type="text" class="form-control" id="nama_barang" name="nama_barang" 20px" /></div>
+            <div class="form-group col-6"><label>Merk</label><input type="text" class="form-control" id="merk" name="merk" 20px" /></div>
+            <div class="form-group col-6"><label>Kondisi barang</label><input type="text" class="form-control" id="kondisi" name="kondisi" 20px" /></div>
+            <div class="form-group col-6"><label>Keterangan</label><input type="text" class="form-control" id="keterangan" name="keterangan" 20px" /></div>
+            <div class="form-group col-6"><label>Status</label><input type="text" class="form-control" id="status" name="status" 20px" /></div>
+          </div>
+          <div class="modal-footer">
+            <button onclick="tambahTamu()" type="button" class="btn btn-primary" id="btnSimpan">Simpan</button>
+            <button type="button" class="btn btn-secondary" onclick="kosongForm()">Reset</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Edit -->
+<div class="modal fade" role="dialog" id="modaledit">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" 20px">Tambah Siswa</h5>
+        <button type="button" class="close" datadismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form action="" method="get" id="tampiledit">
+          <div class="row">
+            <input type="text" hidden class="form-control" id="id" name="id" value="" 20px" />
+            <div class="form-group col-6"><label>Nama Barang</label><input type="text" class="form-control" id="nama_barang" name="nama_barang" 20px" /></div>
+            <div class="form-group col-6"><label>Merk</label><input type="text" class="form-control" id="merk" name="merk" 20px" /></div>
+            <div class="form-group col-6"><label>Kondisi barang</label><input type="text" class="form-control" id="kondisi" name="kondisi" 20px" /></div>
+            <div class="form-group col-6"><label>Keterangan</label><input type="text" class="form-control" id="keterangan" name="keterangan" 20px" /></div>
+            <div class="form-group col-6"><label>Status</label><input type="text" class="form-control" id="status" name="status" 20px" /></div>
+          </div>
+          <button type="button" id="updateTamu" class="btn btn-primary mt-5">Update</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    ambildatatamu(); // Memuat data pertama kali
+  });
+</script>
+
+<script>
+  function tambahTamu() {
+    var form = $("#formTambahtamu").serializeArray();
+
+    var data = JSON.parse(localStorage.getItem("form")) || [];
+    data.push(form);
+    localStorage.setItem("form", JSON.stringify(data));
+
+    if (navigator.onLine) {
+      $.each(data, function (indexInArray, valueOfElement) {
+        // Kirim data ke server menggunakan AJAX
+        $.ajax({
+          type: "POST",
+          url: "https://tugasapi.informatikaunwaha.com/yaya/api/api.php/input",
+          dataType: "JSON", // Ganti dengan URL tempat Anda menyimpan fungsi PHP untuk menangani data
+          data: valueOfElement,
+          success: function (response) {
+            localStorage.removeItem("form");
+            // swal({
+            //   title: "Berhasil",
+            //   text: "Data Berhasil Ditambahkan",
+            //   icon: "success",
+            // });
+            console.log(response);
+            // Reset form setelah selesai
+            kosongForm();
+          },
+          error: function (error) {
+            console.log("Error: ", error.responseText);
+            swal({
+              title: "Gagal",
+              text: "Terjadi Kesalahan Harap Coba Lagi",
+              icon: "error",
+            });
+          },
+        });
+      });
+    }
+  }
+
+  function ambildatatamu() {
+    $.ajax({
+      type: "GET",
+      url: "https://tugasapi.informatikaunwaha.com/yaya/api/api.php/all",
+      dataType: "JSON",
+      success: function (data) {
+        // Menghapus semua baris pada tabel
+        // console.log(data);
+        localStorage.removeItem("form");
+        $("#tbl-api").DataTable().clear().draw();
+
+        // Mengisi tabel dengan data yang diterima dari server
+        $.each(data.data, function (index, item) {
+          var row = `<tr>
+                      <td>${index + 1}</td>
+                      <td>${item.nama_barang}</td>
+                      <td>${item.merk}</td>
+                      <td>${item.kondisi}</td>
+                      <td>${item.keterangan}</td>
+                      <td>${item.status}</td>
+                      <td>
+                        <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modaledit" id="buttontampiledit" data-id="${item.id}">Edit</button>
+                        <button type="button" class="btn btn-sm btn-danger" id="hapusTamu" data-id="${item.id}">Hapus</button>
+                      </td>
+                    </tr>`;
+          $("#tbl-api").DataTable().row.add($(row)).draw();
+        });
+        $("#tbl-api").DataTable(); // Inisialisasi DataTable
+      },
+      error: function (error) {
+        console.log("Error: ", error);
+        alert("Terjadi kesalahan saat mengambil data. Silakan coba lagi.");
+      },
+    });
+  }
+
+  // Fungsi untuk menampilkan data pada form edit
+  // Lakukan request AJAX untuk mendapatkan data tamu berdasarkan ID
+  // Setelah mendapatkan data, isi form edit dengan data tersebut
+
+  $("#tbl-api").on("click", "#buttontampiledit", function () {
+    id = $(this).data("id");
+    $.ajax({
+      type: "GET",
+      url: "https://informatikaunwaha.com/tugasapi.informatikaunwaha.com/yaya/api/api.php/cari/id/eq/" + id,
+      dataType: "JSON",
+      data: { id: $("#tamu").data("id") },
+      success: function (data) {
+        $.each(data.data, function (index, element) {
+          $("#modaledit #id").val(element.id);
+          $("#modaledit #nama_barang").val(element.nama_barang);
+          $("#modaledit #merk").val(element.merk);
+          $("#modaledit #kondisi").val(element.kondisi);
+          $("#modaledit #keterangan").val(element.keterangan);
+          $("#modaledit #status").val(element.status);
+        });
+      },
+      error: function (error) {
+        console.log("Error: ", error);
+        alert("Terjadi kesalahan saat mengambil data. Silakan coba lagi.");
+      },
+    });
+  });
+
+  // HAPUSSS TAMU
+  $("#tbl-api").on("click", "#hapusTamu", function () {
+    id = $(this).data("id");
+    // console.log(id);
+    $.ajax({
+      type: "DELETE",
+      url: "https://informatikaunwaha.com/tugasapi.informatikaunwaha.com/yaya/api/api.php",
+      data: { id: id, kolom: "id" },
+      dataType: "JSON",
+      success: function (response) {
+        swal({
+          title: "Berhasil",
+          text: "Data Berhasil Dihapus",
+          icon: "success",
+        });
+      },
+      error: function (error) {
+        swal({
+          title: "Gagal",
+          text: "Terjadi Kesalahan Harap Coba Lagi",
+          icon: "error",
+        });
+      },
+    });
+  });
+  // UPDATE TAMU
+  $("#updateTamu").on("click", function (event) {
+    event.preventDefault();
+    var data = $("#tampiledit").serialize();
+    <!-- console.log(data); -->
+    $.ajax({
+      type: "PUT",
+      url: "https://tugasapi.informatikaunwaha.com/yaya/api/api.php",
+      contentType: "application/x-www-urlencoded",
+      data: data,
+      success: function (response) {
+        // swal({
+        //   title: "Berhasil",
+        //   text: "Data Berhasil Ditambahkan",
+        //   icon: "success",
+        // });
+        console.log(response.messege);
+      },
+      error: function (error) {
+        console.log("Error: ", error);
+        alert("Terjadi kesalahan. Silakan coba lagi.");
+      },
+    });
+  });
+</script>
