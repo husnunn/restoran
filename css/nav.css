@@ -46,19 +46,101 @@ body[data-theme="light"] .sidebar-item:hover > .sidebar-link i,
 body[data-theme="light"] .sidebar-item:hover > .sidebar-link svg {
   color: #ff0000;
 }
-.sidebar-item:hover .sidebar-link:hover{
+.sidebar-item:hover .sidebar-link:hover {
   color: #ff0000;
 }
-a:hover{
-  color: #ff0000!important;
-
+a:hover {
+  color: #ff0000 !important;
 }
 .content {
-   padding:1rem 1rem 1.5rem!important;
+  padding: 1rem 1rem 1.5rem !important;
 }
 
-.btn.disabled, .btn:disabled, fieldset:disabled .btn {
+.btn.disabled,
+.btn:disabled,
+fieldset:disabled .btn {
   background-color: rgb(82, 82, 82);
   border-color: rgb(82, 82, 82);
   pointer-events: none;
 }
+
+.icondash-green {
+  padding: 25px;
+  background: rgba(0, 255, 87, 0.24) !important;
+  border-radius: 10px;
+}
+.icondash-green i {
+  color: rgb(26, 198, 44) !important;
+}
+.icondash-red {
+  padding: 25px;
+  background: rgba(255, 0, 119, 0.24);
+  border-radius: 10px;
+}
+.icondash-red i {
+  color: rgb(198, 26, 155) !important;
+}
+.icondash-blue {
+  padding: 25px;
+  background: rgba(0, 68, 255, 0.24);
+  border-radius: 10px;
+}
+.icondash-blue i {
+  color: rgb(26, 86, 198) !important;
+}
+
+.buttons-excel,
+.buttons-excel:hover,
+.buttons-excel:active {
+  background-color: var(--bs-success);
+  border-color: var(--bs-success);
+}
+
+.buttons-print,
+.buttons-print:hover,
+.buttons-print:active {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.dataTables_length,
+.dataTables_filter {
+  margin-bottom: 10px;
+}
+@media screen and (max-width: 780px) {
+  .label_cari {
+    display: none;
+  }
+  .dataTables_filter input,
+  .dataTables_filter label {
+    width: 100% !important;
+  }
+  div.dataTables_wrapper div.dataTables_filter input {
+    margin: 0em;
+  }
+}
+.dataTables_filter,
+.dataTables_length {
+  display: inline !important;
+  margin-left: 1em;
+  width: 50% !important;
+}
+.dataTables_length {
+  margin-left: 0px;
+}
+.dataTables_filter {
+  float: inline-end;
+}
+.dt-buttons {
+  width: 100%;
+  margin-bottom: 20px;
+}
+.btn-group-vertical > .btn,
+.btn-group > .btn {
+  position: relative;
+  flex: none;
+}
+.paginate_button a {
+  padding: 5px 12px;
+}
+

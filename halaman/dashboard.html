@@ -1,0 +1,212 @@
+<div class="row">
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="icondash-blue me-4">
+            <i class="fas fa-wallet text-success-emphasis fs-2"></i>
+          </div>
+          <div>
+            <h4 class="mb-2">Pendapatan</h4>
+            <h2 class="mb-2 fw-bold fs-2" id="pendapat"></h2>
+            <h6 class="bulanini mb-0">Bulan</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="icondash-green me-4">
+            <i class="fas fa-bowl-rice text-success-emphasis fs-2"></i>
+          </div>
+          <div>
+            <h4 class="mb-2">Penjualan Resto</h4>
+            <h2 class="mb-2 fw-bold fs-2" id="jresto">Pcs</h2>
+            <h6 class="bulanini mb-0">Bulan</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="icondash-red me-4">
+            <i class="fas fa-coffee text-success-emphasis fs-2"></i>
+          </div>
+          <div>
+            <h4 class="mb-2">Penjualan Mitra</h4>
+            <h2 class="mb-2 fw-bold fs-2" id="jmitra">Pcs</h2>
+            <h6 class="bulanini mb-0">Bulan</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-7">
+    <div class="card">
+      <div class="card-header">Statistik</div>
+      <div class="card-body p-1">
+        <div id="chartbook"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-5">
+    <div class="card">
+      <div class="card-header">Rate Menu Teratas</div>
+      <div class="card-body p-1">
+        <div id="chart"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+  var dt = new Date();
+
+  $.ajax({
+    type: "GET",
+    url: "https://informatikaunwaha.com/restaurant/api_bimo/get_mitra.php",
+    dataType: "JSON",
+    data: {
+      query: "SELECT SUM(orders.qty) as qty FROM orders JOIN menumakanan ON menumakanan.nama_makanan=orders.item WHERE menumakanan.milik NOT LIKE 'Res' AND MONTH(orders.tanggal)=" + (dt.getMonth() + 1),
+    },
+    success: function (response) {
+      $("#jmitra").text(response[0].qty + " Item");
+    },
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "https://informatikaunwaha.com/restaurant/api_bimo/get_mitra.php",
+    dataType: "JSON",
+    data: {
+      query: "SELECT SUM(orders.qty) as qty FROM orders JOIN menumakanan ON menumakanan.nama_makanan=orders.item WHERE menumakanan.milik LIKE 'Res' AND MONTH(orders.tanggal)=" + (dt.getMonth() + 1),
+    },
+    success: function (response) {
+      $("#jresto").text(response[0].qty + " Item");
+
+      $.ajax({
+        type: "GET",
+        url: "https://informatikaunwaha.com/restaurant/api_bimo/get_mitra.php",
+        dataType: "JSON",
+        data: {
+          query: "SELECT SUM(orders.price) as qty FROM orders JOIN menumakanan ON menumakanan.nama_makanan=orders.item",
+        },
+        success: function (ss) {
+          console.log();
+
+          $("#pendapat").text("Rp." + new Intl.NumberFormat().format(ss[0].qty));
+          chart_menu();
+        },
+      });
+    },
+  });
+
+  $(".bulanini").each(function (index, element) {
+    $(element).text("Bulan " + bulan[dt.getMonth()]);
+  });
+
+  function chart_menu() {
+    $.ajax({
+      type: "GET",
+      url: "https://informatikaunwaha.com/restaurant/api_bimo/get_mitra.php",
+      dataType: "JSON",
+      data: {
+        query: "SELECT SUM(qty) as jumlah, item FROM `orders` GROUP BY item ORDER BY SUM(qty) DESC LIMIT 5",
+      },
+      success: function (ss) {
+        // Extract labels and values from data
+        chartData = ss;
+
+        // Extract labels and values from data
+        var labels = chartData.map(function (item) {
+          return item.item;
+        });
+
+        var values = chartData.map(function (item) {
+          return parseInt(item.jumlah, 10);
+        });
+
+        // Create ApexCharts instance for a donut chart
+        var options = {
+          chart: {
+            type: "donut",
+          },
+          series: values,
+          labels: labels,
+          responsive: [
+            {
+              breakpoint: 480,
+              options: {
+                chart: {
+                  width: 50,
+                },
+                legend: {
+                  position: "bottom",
+                },
+              },
+            },
+          ],
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+
+        // Render the chart
+        chart.render();
+        booking_chart();
+      },
+    });
+  }
+
+  function booking_chart() {
+    $.ajax({
+      type: "GET",
+      url: "https://informatikaunwaha.com/restaurant/api_bimo/get_mitra.php",
+      dataType: "JSON",
+      data: {
+        query: "SELECT COUNT(id_table) as jumlahbooking, tanggal FROM `tb_restoran` GROUP BY DAY(tanggal)",
+      },
+      success: function (ss) {
+        chartData = ss;
+
+        // Extract labels and values from data
+        var labels = chartData.map(function (item) {
+          return item.tanggal;
+        });
+
+        var values = chartData.map(function (item) {
+          return parseInt(item.jumlahbooking, 10);
+        });
+
+        // Create ApexCharts instance for an area chart
+        var options = {
+          chart: {
+            type: "area",
+          },
+          series: [
+            {
+              name: "Jumlah Booking",
+              data: values,
+            },
+          ],
+          xaxis: {
+            categories: labels,
+          },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chartbook"), options);
+
+        // Render the chart
+        chart.render();
+      },
+    });
+  }
+</script>

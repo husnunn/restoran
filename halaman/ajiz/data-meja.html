@@ -57,6 +57,24 @@
      
      `);
         });
+        $("table").DataTable({
+          fixedHeader: true,
+          lengthMenu: [
+            [20, 50, -1],
+            [20, 50, "All"],
+          ],
+          dom: "Bflrtip",
+          buttons: [
+            {
+              extend: "print",
+              text: "Cetak",
+            },
+            {
+              extend: "excel",
+              text: "Export Excel",
+            },
+          ],
+        });
       },
     });
   }

@@ -1,0 +1,87 @@
+<div class="card">
+  <div class="card-header">Laporan Penjualan Mitra</div>
+  <div class="card-body">
+    <table class="table table-bordered" id="salesTable">
+      <thead>
+        <th>#</th>
+        <th>Tanggal</th>
+        <th>Kode Order</th>
+        <th>Item</th>
+        <th>Mitra</th>
+        <th>Jumlah</th>
+        <th>Total Harga</th>
+      </thead>
+      <tbody></tbody>
+      <tfoot>
+        <td colspan="7" class="text-end fw-bold"></td>
+      </tfoot>
+    </table>
+  </div>
+</div>
+<script>
+  $.ajax({
+    type: "GET",
+    url: "https://informatikaunwaha.com/restaurant/api_bimo/get_mitra.php",
+    dataType: "json",
+    data: {
+      query: "SELECT * FROM orders JOIN menumakanan ON menumakanan.nama_makanan=orders.item WHERE menumakanan.milik NOT LIKE 'Res'",
+    },
+    success: function (response) {
+      $.each(response, function (indexInArray, valueOfElement) {
+        $("tbody").append(`
+          <tr>
+            <td>${indexInArray + 1}</td>
+            <td>${valueOfElement.tanggal}</td>
+            <td>${valueOfElement.kodeorder}</td>
+            <td>${valueOfElement.nama_makanan}</td>
+            <td>${valueOfElement.milik}</td>
+            <td>${valueOfElement.qty} Pcs</td>
+            <td>Rp.${new Intl.NumberFormat().format(valueOfElement.price)}</td>
+          </tr>
+        `);
+      });
+
+      $(".table").DataTable({
+        fixedHeader: true,
+        lengthMenu: [
+          [20, 50, -1],
+          [20, 50, "All"],
+        ],
+        dom: "Bflrtip",
+        buttons: [
+          {
+            extend: "print",
+            text: "Cetak",
+          },
+          {
+            extend: "excel",
+            text: "Export Excel",
+          },
+        ],
+        footerCallback: function (row, data, start, end, display) {
+          let api = this.api();
+
+          // Remove the formatting to get integer data for summation
+          let intVal = function (i) {
+            return typeof i === "string" ? i.replace(/[\Rp.,]/g, "") * 1 : typeof i === "number" ? i : 0;
+          };
+
+          // Total over all pages
+          total = api
+            .column(6)
+            .data()
+            .reduce((a, b) => intVal(a) + intVal(b), 0);
+
+          // Total over this page
+          pageTotal = api
+            .column(6, { page: "current" })
+            .data()
+            .reduce((a, b) => intVal(a) + intVal(b), 0);
+
+          // Update footer
+          $("tfoot td").html(`Pendapatan : Rp.${new Intl.NumberFormat().format(pageTotal)} `);
+        },
+      });
+    },
+  });
+</script>

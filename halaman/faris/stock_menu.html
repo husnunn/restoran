@@ -77,7 +77,6 @@
       jenisMenu = "add";
       $("#statusmenu").addClass("d-none");
       $("#modalTitleId").text("Tambah Menu");
-      
     } else {
       jenisMenu = "edit";
       $("#statusmenu").removeClass("d-none");
@@ -97,7 +96,7 @@
     if (jenisMenu == "add") {
       var dataMenu = {
         nama_makanan: $("#nama_makanan").val(),
-        milik:$("#milik").val(),
+        milik: $("#milik").val(),
         harga: $("#harga").val(),
       };
 
@@ -117,7 +116,7 @@
         harga: $("#harga").val(),
         status: $("#status").val(),
         id: $("#id").val(),
-        milik:$("#milik").val(),
+        milik: $("#milik").val(),
       };
       $.ajax({
         type: "POST",
@@ -163,6 +162,7 @@
             [20, 50, -1],
             [20, 50, "All"],
           ],
+          fixedHeader: true,
         });
       },
     });

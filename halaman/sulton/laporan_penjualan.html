@@ -13,32 +13,79 @@
         <th>Pendapatan</th>
       </thead>
       <tbody></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="8" class="text-end fw-bold">0</td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 </div>
+
 <script>
-  $.ajax({
-    type: "GET",
-    url: "https://informatikaunwaha.com/restaurant/api_sulton2/api.php/all",
-    dataType: "JSON",
-    success: function (response) {
-      $.each(response.data, function (indexInArray, valueOfElement) {
-        $("tbody").append(`
-<tr>
-        <td>${indexInArray + 1}</td>
-        <td>${valueOfElement.tgl_transaksi}</td>
-        <td>${valueOfElement.kodeorder}</td>
-        <td>${valueOfElement.meja}</td>
-        <td>${valueOfElement.totalpesanan} Items</td>
-        <td>Rp.${new Intl.NumberFormat().format(valueOfElement.hargatotal)}</td>
-        <td>${valueOfElement.diskon}%</td>
-        <td>Rp.${new Intl.NumberFormat().format(valueOfElement.pendapatan)}</td>
-</tr>
-  
-              
-              `);
-        $(".table").DataTable();
-      });
-    },
+  $(document).ready(function () {
+    $.ajax({
+      type: "GET",
+      url: "https://informatikaunwaha.com/restaurant/api_sulton2/api.php/all",
+      dataType: "JSON",
+      success: function (response) {
+        $.each(response.data, function (indexInArray, valueOfElement) {
+          $("tbody").append(`
+            <tr>
+              <td>${indexInArray + 1}</td>
+              <td>${valueOfElement.tgl_transaksi}</td>
+              <td>${valueOfElement.kodeorder}</td>
+              <td>${valueOfElement.meja}</td>
+              <td>${valueOfElement.totalpesanan} Items</td>
+              <td>Rp.${new Intl.NumberFormat().format(valueOfElement.hargatotal)}</td>
+              <td>${valueOfElement.diskon}%</td>
+              <td>Rp.${new Intl.NumberFormat().format(valueOfElement.pendapatan)}</td>
+            </tr>
+          `);
+        });
+
+        $(".table").DataTable({
+          fixedHeader: true,
+          dom: "Bflrtip",
+          buttons: [
+            {
+              extend: "print",
+              text: "Cetak",
+            },
+            {
+              extend: "excel",
+              text: "Export Excel",
+            },
+          ],
+          lengthMenu: [
+            [20, 50, -1],
+            [20, 50, "All"],
+          ],
+          footerCallback: function (row, data, start, end, display) {
+            let api = this.api();
+
+            // Remove the formatting to get integer data for summation
+            let intVal = function (i) {
+              return typeof i === "string" ? i.replace(/[\Rp.,]/g, "") * 1 : typeof i === "number" ? i : 0;
+            };
+
+            // Total over all pages
+            total = api
+              .column(7)
+              .data()
+              .reduce((a, b) => intVal(a) + intVal(b), 0);
+
+            // Total over this page
+            pageTotal = api
+              .column(7, { page: "current" })
+              .data()
+              .reduce((a, b) => intVal(a) + intVal(b), 0);
+
+            // Update footer
+            $("tfoot td").html(`Pendapatan : Rp.${new Intl.NumberFormat().format(pageTotal)} `);
+          },
+        });
+      },
+    });
   });
 </script>
