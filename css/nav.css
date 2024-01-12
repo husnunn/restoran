@@ -65,7 +65,7 @@ fieldset:disabled .btn {
 }
 
 .icondash-green {
-  padding: 25px;
+  padding: 20px;
   background: rgba(0, 255, 87, 0.24) !important;
   border-radius: 10px;
 }
@@ -73,7 +73,7 @@ fieldset:disabled .btn {
   color: rgb(26, 198, 44) !important;
 }
 .icondash-red {
-  padding: 25px;
+  padding: 20px;
   background: rgba(255, 0, 119, 0.24);
   border-radius: 10px;
 }
@@ -81,7 +81,7 @@ fieldset:disabled .btn {
   color: rgb(198, 26, 155) !important;
 }
 .icondash-blue {
-  padding: 25px;
+  padding: 20px;
   background: rgba(0, 68, 255, 0.24);
   border-radius: 10px;
 }
