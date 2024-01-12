@@ -7,10 +7,11 @@
   .kiri {
     width: 62%;
   }
-  td,th{
-    padding: 7px!important  ;
+  td,
+  th {
+    padding: 7px !important  ;
   }
-  .cart-each-product{
+  .cart-each-product {
     padding: 5px;
   }
 </style>
@@ -40,19 +41,16 @@
 
 <script src="halaman/menumakanan/js/jQuery.SimpleCart.js"></script>
 <script>
- 
- function cek_status_menu(status) { 
+  $(document).ready(function () {});
 
-  if(status=='Empty'){
-    var element=`disabled='true'`
-    return element
-  }else{
-    var element=`disabled='false'`
+  function cek_status_menu(status) {
+    if (status == "Empty") {
+      var element = `disabled='true'`;
+      return element;
+    } else {
+      var element = `disabled='false'`;
+    }
   }
-  
-
-  }
-  
 
   $.ajax({
     type: "GET",
@@ -74,15 +72,13 @@
       });
 
       $("#cart").simpleCart();
+
       $(".table").DataTable({
-          lengthMenu: [
-            [20,50, -1],
-            [20, 50, "All"],
-          ],
-        });
-      var kodeorder='#'+Math.floor(Math.random() * 999999);
-  $('#kodeorder').val(kodeorder)
+        lengthMenu: [
+          [20, 50, -1],
+          [20, 50, "All"],
+        ],
+      });
     },
   });
 </script>
-

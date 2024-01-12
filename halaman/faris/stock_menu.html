@@ -25,7 +25,10 @@
             <label for="" class="form-label">Harga Menu</label>
             <input type="text" id="harga" class="form-control" placeholder="" aria-describedby="helpId" />
           </div>
-
+          <div class="mb-3">
+            <label for="" class="form-label">Milik</label>
+            <input type="text" id="milik" class="form-control" placeholder="" aria-describedby="helpId" />
+          </div>
           <div class="mb-3 d-none" id="statusmenu">
             <label for="" class="form-label">Status Menu</label>
             <input type="text" id="status" class="form-control" placeholder="" aria-describedby="helpId" />
@@ -51,6 +54,7 @@
         <th>No</th>
         <th>Nama Menu</th>
         <th>Harga</th>
+        <th>Milik</th>
         <th>Status</th>
         <th>Aksi</th>
       </thead>
@@ -67,15 +71,18 @@
     $("#harga").val("");
     $("#status").val("");
     $("#id").val("");
+    $("#milik").val("");
 
     if (jenis == "add") {
       jenisMenu = "add";
       $("#statusmenu").addClass("d-none");
       $("#modalTitleId").text("Tambah Menu");
+      
     } else {
       jenisMenu = "edit";
       $("#statusmenu").removeClass("d-none");
       $("#modalTitleId").text("Edit Menu");
+      $("#milik").val($(elem).attr("data-milik"));
 
       $("#nama_makanan").val($(elem).attr("data-name"));
       $("#harga").val($(elem).attr("data-price"));
@@ -90,6 +97,7 @@
     if (jenisMenu == "add") {
       var dataMenu = {
         nama_makanan: $("#nama_makanan").val(),
+        milik:$("#milik").val(),
         harga: $("#harga").val(),
       };
 
@@ -109,6 +117,7 @@
         harga: $("#harga").val(),
         status: $("#status").val(),
         id: $("#id").val(),
+        milik:$("#milik").val(),
       };
       $.ajax({
         type: "POST",
@@ -139,9 +148,10 @@
                  <td>${indexInArray + 1}</td>
                  <td>${vale.nama_makanan}</td>
                  <td>Rp.${new Intl.NumberFormat().format(vale.harga)}</td>
+                 <td>${vale.milik}</td>
                  <td>${vale.status}</td>
                  <td>
-                   <button  onclick="tampil_modal(this,'edit')" class="btn btn-success rounded-2 btn-sm me-1" data-name="${vale.nama_makanan}" data-id="${vale.id}" data-status="${vale.status}" data-price="${vale.harga}" type="submit"><i class='fas fa-edit'></i></button>
+                   <button  onclick="tampil_modal(this,'edit')" class="btn btn-success rounded-2 btn-sm me-1" data-milik="${vale.milik}"  data-name="${vale.nama_makanan}" data-id="${vale.id}" data-status="${vale.status}" data-price="${vale.harga}" type="submit"><i class='fas fa-edit'></i></button>
                    <button class="btn btn-danger rounded-2 btn-sm me-3" data-name="${vale.nama_makanan}" data-id="${vale.id}" data-status="${vale.status}" data-price="${vale.harga}" type="submit"><i class='fas fa-trash'></i></button>
                  </td>
                </tr>          

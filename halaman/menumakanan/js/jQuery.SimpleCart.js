@@ -6,10 +6,9 @@
  */
 
 /* '(function(){})();' this function is used, to make all variables of the plugin Private */
+var totalhargaSemua = 0;
 
 (function ($, window, document, undefined) {
-  
-
   /* Default Options */
   var defaults = {
     cart: [],
@@ -18,14 +17,15 @@
     totalCartCountClass: ".total-cart-count",
     totalCartCostClass: ".total-cart-cost",
     showcartID: "#show-cart",
-    namas:'.namas',
+    namas: ".namas",
     itemCountClass: ".item-count",
   };
 
-  function Item(name, price, count) {
+  function Item(name, price, hargaasli, count) {
     this.name = name;
     this.price = price;
     this.count = count;
+    this.hargaasli = hargaasli;
   }
   /*Constructor function*/
   function simpleCart(domEle, options) {
@@ -79,19 +79,21 @@
                 <i class="fas fa-gift"></i>
 
                 </span>
-                <input type="text" class="form-control"  id='voucher' style='padding:7px!important;text-align:start'  placeholder="KODE VOUCHER" aria-label="Username" aria-describedby="basic-addon1">
+                <input type="text" class="form-control"  id='kodevoucher' style='padding:7px!important;text-align:start'  placeholder="KODE VOUCHER" aria-label="Username" aria-describedby="basic-addon1">
+                <button class='btn btn-success'  onclick="cekvoucher()">Cek</button>
                 </div>
 
                       <div class='spacer'></div>
                       <div class='d-flex justify-content-between align-items-center'>
                       <div class='fs-5'>Total</div>
-                      <div class='d-flex fw-medium fs-5'>Rp.<div class='total-cart-cost'>0</div></div>
+                      <div class='d-flex fw-medium fs-5' >Rp.<div id='coret' class='total-cart-cost'>0</div>
+                      <div class='total-cart-diskon ms-1'> - Diskon : Rp0</div>
+
+                      </div>
                       </div></div>
                       <div class='cart-checkout'>
                       <input type='hidden' class='form-control fw-bold' id='kodeorder'/>
-                      <form action='#'>
-                          <button type='submit' class='mt-4 btn btn-primary'>Proceed To Checkout</button>
-                      </form>
+                      <button class='mt-4 btn btn-primary' onclick="proses_pesanan()">Proceed To Checkout</button>
                   </.div>
             </div>`
       );
@@ -101,7 +103,6 @@
       var mi = this;
       $(this.options.totalCartCostClass).hide();
       $(this.options.totalCartCostClass).fadeIn();
-
 
       $(this.options.cartProductListClass).html(mi._displayCart());
       $(this.options.totalCartCountClass).html("Your Cart " + mi._totalCartCount() + " items");
@@ -114,7 +115,7 @@
         e.preventDefault();
         var name = $(this).attr("data-name");
         var cost = Number($(this).attr("data-price"));
-        mi._addItemToCart(name, cost, 1);
+        mi._addItemToCart(name, cost, cost, 1);
         mi._updateCartDetails();
       });
 
@@ -124,29 +125,31 @@
         var count = $(this).val();
         var name = $(this).attr("data-name");
         var cost = Number($(this).attr("data-price"));
-        mi._removeItemfromCart(name, cost, count);
+        mi._removeItemfromCart(name, cost, cost, count);
         mi._updateCartDetails();
       });
     },
     /* Helper Functions */
-    _addItemToCart: function (name, price, count) {
+    _addItemToCart: function (name, price, hargaasli, count) {
       for (var i in this.cart) {
         if (this.cart[i].name === name) {
           this.cart[i].count++;
           this.cart[i].price = price * this.cart[i].count;
+          this.cart[i].hargaasli = price;
           this._saveCart();
           return;
         }
       }
-      var item = new Item(name, price, count);
+      var item = new Item(name, price, hargaasli, count);
       this.cart.push(item);
       this._saveCart();
     },
-    _removeItemfromCart: function (name, price, count) {
+    _removeItemfromCart: function (name, price, hargaasli, count) {
       for (var i in this.cart) {
         if (this.cart[i].name === name) {
           var singleItemCost = Number(price / this.cart[i].count);
           this.cart[i].count = count;
+          this.cart[i].hargaasli = price;
           this.cart[i].price = singleItemCost * count;
           if (count == 0) {
             this.cart.splice(i, 1);
@@ -243,4 +246,108 @@
 function del_list(elems) {
   $("#" + $(elems).attr("target-del")).val(0);
   $("#" + $(elems).attr("target-del")).change();
+}
+var kodeorder = "#" + Math.floor(Math.random() * 999999);
+var totalHargaDiskon = 0;
+var pVoucher = 0;
+
+function proses_pesanan() {
+  // Collecting data for the table
+  var data_meja = {
+    nomormeja: $("#mejanomor").val(),
+    kodeorderan: kodeorder,
+  };
+
+  // Combining table and order details into a single object
+  var orderData = {
+    datame: data_meja,
+    datapes: JSON.parse(localStorage.getItem("shoppingCart")),
+  };
+
+  var tanggalSekarang = new Date();
+
+  totalPesananJumlah = 0;
+  $.each(JSON.parse(localStorage.getItem("shoppingCart")), function (indexInArray, valueOfElement) {
+    totalPesananJumlah = Number(totalPesananJumlah) + Number(valueOfElement.count);
+  });
+  totalhargaSemua = $(".total-cart-cost").text().replaceAll(",", "");
+
+  var dataLaporan = {
+    tanggal: tanggalSekarang.toLocaleDateString("id-ID"),
+    kodeorderan: kodeorder,
+    nomormeja: $("#mejanomor").val(),
+    totalItem: totalPesananJumlah,
+    hargaAsli: totalhargaSemua,
+    potonganVoucher: pVoucher,
+    hargaDanPotongan: totalHargaDiskon,
+  };
+
+  // // Sending a POST request to the server
+  $.ajax({
+    type: "POST",
+    url: "https://informatikaunwaha.com/restaurant/api_faris/add_dapur.php",
+    data: { orderData: JSON.stringify(orderData) },
+    dataType: "JSON",
+    success: function (response) {
+      var kodeorder = "#" + Math.floor(Math.random() * 999999);
+     
+      $.ajax({
+        type: "POST",
+        url: "https://informatikaunwaha.com/restaurant/notif/kirim.php",
+        data: {
+          pesan: "ORDERAN BARU MASUK",
+        },
+        dataType: "JSON",
+        success: function (response) {},
+      });
+
+    },
+  });
+  masukkan_laporan(dataLaporan);
+}
+
+function masukkan_laporan(arrays) {
+  alert(JSON.stringify(arrays))
+  $.ajax({
+    type: "POST",
+    url: "https://informatikaunwaha.com/restaurant/api_sulton/api_inputlaporan.php",
+    data: { dataLaporanFix: JSON.stringify(arrays) },
+    dataType: "JSON",
+    success: function (response) {
+      console.log(response.status);
+      // localStorage.setItem("shoppingCart", "");
+
+      // window.location.reload();
+    },
+  });
+}
+
+function cekvoucher(elem) {
+  totalhargaSemua = $(".total-cart-cost").text().replaceAll(",", "");
+
+  $.ajax({
+    type: "GET",
+    url: "https://informatikaunwaha.com/restaurant/api_ajeng/api.php/cari/kode_voucher/lk/" + $("#kodevoucher").val(),
+
+    dataType: "JSON",
+    success: function (response) {
+      if (response.data) {
+        if (response.data[0]["status"] == 0) {
+          console.log(response.data[0]["potongan"] + "%");
+          var has = Number(totalhargaSemua) * (Number(response.data[0]["potongan"]) / 100);
+          totalHargaDiskon = totalhargaSemua - has;
+
+          pVoucher = Number(response.data[0]["potongan"]);
+
+          $("#coret").css("text-decoration", "line-through");
+          $("#coret").css("color", "red");
+          $(".total-cart-diskon").text(" - Diskon : Rp." + totalHargaDiskon);
+        } else {
+          alert("Voucher Sudah Di Gunakan");
+        }
+      } else {
+        alert("Kode Voucher Tidak Di Temukan");
+      }
+    },
+  });
 }

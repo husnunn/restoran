@@ -11,7 +11,7 @@
     </div>
     <div class="mb-3">
       <label for="" class="form-label">Harga Booking</label>
-      <input type="number" class="form-control" id="harga" />
+      <input type="text" class="form-control" data-type="currency" id="harga" />
     </div>
 
     <button class="float-end btn btn-success">Simpan</button>
@@ -19,15 +19,11 @@
 </div>
 
 <script>
-
-$('body').
-
-
   $("button").click(function () {
     var dataMeja = {
       nomormeja: $("#nomormeja").val(),
       kapasitas: $("#kapasitas").val(),
-      hargabook: $("#harga").val(),
+      hargabook: $("#harga").val().replaceAll(',',''),
     };
 
     $.ajax({
@@ -47,3 +43,4 @@ $('body').
     });
   });
 </script>
+<script src="js/currency_format.js"></script>

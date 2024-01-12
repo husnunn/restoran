@@ -1,32 +1,32 @@
-
 <div class="row" id="list-pesanan"></div>
 <script>
-     function load_dapur() {
-       var gg = [];
-       $.ajax({
-         type: "GET",
-         url: "https://informatikaunwaha.com/restaurant/api_sevi/api.php/all",
-         
-         dataType: "json",
-         success: function (response) {
-           console.log(response);
-           dataInvoice = response.data;
-           gg = response;
-           var uniqueCodes = [];
-           var meja=[]
+  function load_dapur() {
+    $("#list-pesanan").html('');
+    var gg = [];
+    $.ajax({
+      type: "GET",
+      url: "https://informatikaunwaha.com/restaurant/api_sevi/api.php/all",
 
-           // Memetakan pesanan ke dalam kode unik
-           $.each(dataInvoice, function (index, order) {
-             if ($.inArray(order.kodeorder, uniqueCodes) === -1) {
-               uniqueCodes.push(order.kodeorder);
-               meja.push(order.meja);
-             }
-           });
+      dataType: "json",
+      success: function (response) {
+        console.log(response);
+        dataInvoice = response.data;
+        gg = response;
+        var uniqueCodes = [];
+        var meja = [];
 
-           var htmlk = ``;
-           // Membuat div untuk setiap pesanan dengan kode unik
-           $.each(uniqueCodes, function (index, uniqueCode) {
-             htmlk += `
+        // Memetakan pesanan ke dalam kode unik
+        $.each(dataInvoice, function (index, order) {
+          if ($.inArray(order.kodeorder, uniqueCodes) === -1) {
+            uniqueCodes.push(order.kodeorder);
+            meja.push(order.meja);
+          }
+        });
+
+        var htmlk = ``;
+        // Membuat div untuk setiap pesanan dengan kode unik
+        $.each(uniqueCodes, function (index, uniqueCode) {
+          htmlk += `
              <div class='col-4  mb-2'>
              <div class='card h-100'>
                 <div class='card-header'>
@@ -39,18 +39,18 @@
 
              <ul style='max-height:300px;overflow-y:auto' class='list-group rounded-0 border-0' id='unique_${uniqueCode}'>`;
 
-             $.each(dataInvoice, function (index, order) {
-               if (order.kodeorder === uniqueCode) {
-                 htmlk += `<li class='list-group-item border-0 border-bottom py-2' >
+          $.each(dataInvoice, function (index, order) {
+            if (order.kodeorder === uniqueCode) {
+              htmlk += `<li class='list-group-item border-0 border-bottom py-2' >
                    <div class='row'>
                        <div class='col-10'>${order.item} </div>
                        <div class='col-2'><div class='rounded-1 text-danger fw-bold d-flex justify-content-center align-items-center' style='width:30px;'>${order.qty}</div></div>
                      
                        </div>                    
                    </li>`;
-               }
-             });
-             htmlk += `</ul>
+            }
+          });
+          htmlk += `</ul>
                </div>
                <div class='card-footer'>
                    <button class=' btn w-100 btn-success rounded-1' data-idorder='${uniqueCode}'>Pesanan Ready</button>
@@ -59,11 +59,24 @@
                </div>
 
                </div>`;
-           });
-           $("#list-pesanan").append(htmlk);
-         },
-       });
-     }
-     load_dapur();
-   </script>
+        });
+        $("#list-pesanan").append(htmlk);
+      },
+    });
+  }
+  load_dapur();
+</script>
 
+<script>
+  // Enable pusher logging - don't include this in production
+  Pusher.logToConsole = true;
+
+  var pusher = new Pusher("1bedf4803951d8cfc77d", {
+    cluster: "ap1",
+  });
+
+  var channel = pusher.subscribe("my-channel");
+  channel.bind("my-event", function (data) {
+    load_dapur();
+  });
+</script>
