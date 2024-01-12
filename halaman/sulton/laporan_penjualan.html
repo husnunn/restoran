@@ -1,0 +1,44 @@
+<div class="card">
+  <div class="card-header">Laporan Penjualan</div>
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead>
+        <th>#</th>
+        <th>Tanggal</th>
+        <th>Kode Order</th>
+        <th>Meja</th>
+        <th>Jumlah</th>
+        <th>Total Harga</th>
+        <th>Diskon</th>
+        <th>Pendapatan</th>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+<script>
+  $.ajax({
+    type: "GET",
+    url: "https://informatikaunwaha.com/restaurant/api_sulton2/api.php/all",
+    dataType: "JSON",
+    success: function (response) {
+      $.each(response.data, function (indexInArray, valueOfElement) {
+        $("tbody").append(`
+<tr>
+        <td>${indexInArray + 1}</td>
+        <td>${valueOfElement.tgl_transaksi}</td>
+        <td>${valueOfElement.kodeorder}</td>
+        <td>${valueOfElement.meja}</td>
+        <td>${valueOfElement.totalpesanan} Items</td>
+        <td>Rp.${new Intl.NumberFormat().format(valueOfElement.hargatotal)}</td>
+        <td>${valueOfElement.diskon}%</td>
+        <td>Rp.${new Intl.NumberFormat().format(valueOfElement.pendapatan)}</td>
+</tr>
+  
+              
+              `);
+        $(".table").DataTable();
+      });
+    },
+  });
+</script>

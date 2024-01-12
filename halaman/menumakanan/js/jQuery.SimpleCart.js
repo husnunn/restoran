@@ -271,6 +271,9 @@ function proses_pesanan() {
     totalPesananJumlah = Number(totalPesananJumlah) + Number(valueOfElement.count);
   });
   totalhargaSemua = $(".total-cart-cost").text().replaceAll(",", "");
+  if (totalHargaDiskon == 0) {
+    totalHargaDiskon = totalhargaSemua;
+  }
 
   var dataLaporan = {
     tanggal: tanggalSekarang.toLocaleDateString("id-ID"),
@@ -290,7 +293,7 @@ function proses_pesanan() {
     dataType: "JSON",
     success: function (response) {
       var kodeorder = "#" + Math.floor(Math.random() * 999999);
-     
+
       $.ajax({
         type: "POST",
         url: "https://informatikaunwaha.com/restaurant/notif/kirim.php",
@@ -300,24 +303,36 @@ function proses_pesanan() {
         dataType: "JSON",
         success: function (response) {},
       });
-
     },
   });
   masukkan_laporan(dataLaporan);
 }
 
 function masukkan_laporan(arrays) {
-  alert(JSON.stringify(arrays))
+  // alert(JSON.stringify(arrays));
   $.ajax({
     type: "POST",
     url: "https://informatikaunwaha.com/restaurant/api_sulton/api_inputlaporan.php",
     data: { dataLaporanFix: JSON.stringify(arrays) },
     dataType: "JSON",
     success: function (response) {
-      console.log(response.status);
-      // localStorage.setItem("shoppingCart", "");
-
-      // window.location.reload();
+      alert(response.status);
+      if ($("#kodevoucher").val() >0) {
+        $.ajax({
+          type: "GET",
+          url: "https://informatikaunwaha.com/restaurant/api_ajeng/update_statusvou.php?kodevoucher=" + $("#kodevoucher").val(),
+          dataType: "JSON",
+          success: function (response) {
+            localStorage.setItem("shoppingCart", "");
+            $("#kodevoucher").val("");
+            window.location.reload();
+          },
+        });
+      } else {
+        localStorage.setItem("shoppingCart", "");
+        $("#kodevoucher").val("");
+        window.location.reload();
+      }
     },
   });
 }
@@ -346,6 +361,7 @@ function cekvoucher(elem) {
           alert("Voucher Sudah Di Gunakan");
         }
       } else {
+        totalHargaDiskon = totalhargaSemua;
         alert("Kode Voucher Tidak Di Temukan");
       }
     },
