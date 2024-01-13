@@ -2,8 +2,8 @@
   <div class="card-body">
     <div class="row">
       <div class="col-4">
-        <h3>Pengeluaran</h3>
-        <h2 id="balance">Rp.0</h2>
+        <h3>Balance</h3>
+        <h2 id="balance">Balance</h2>
         <p class="mb-0" id="terbilang"></p>
       </div>
       <div class="col-8 row g-1 border-1 border-start ps-3">
@@ -16,8 +16,8 @@
           <input type="number" id="jumlah" class="form-control" placeholder="" aria-describedby="helpId" />
         </div>
         <div class="col-4">
-          <label for="" class="form-label">Keterangan</label>
-          <input type="text" id="keterangan" class="form-control" placeholder="" aria-describedby="helpId" />
+          <label for="" class="form-label">Sumber</label>
+          <input type="text" id="sumber" class="form-control" placeholder="" aria-describedby="helpId" />
         </div>
         <div class="col-2">
           <label for="" class="form-label"></label>
@@ -28,61 +28,79 @@
   </div>
 </div>
 
-<table class="table table-striped">
-  <thead>
-    <th>#</th>
-    <th>Tanggal</th>
-    <th>Jumlah</th>
-    <th>Keperluan</th>
-    <th>Opsi</th>
-  </thead>
-  <tbody></tbody>
-</table>
+<div class="card">
+  <div class="card-body">
+    <table class="table table-striped">
+      <thead>
+        <th>#</th>
+        <th>Tanggal</th>
+        <th>Jumlah</th>
+        <th>Sumber</th>
+        <th>Opsi</th>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
 <script src="js/terbilang.js"></script>
 <script>
   function load_data() {
+    var balance = 0;
     $("tbody").html("");
-    var pengeluarans = 0;
+
     $.ajax({
       type: "GET",
       url: "https://informatikaunwaha.com/restaurant/api_sulton2/get_insert.php",
-      data: {
-        perintah: "select",
-        query: "SELECT * FROM tb_pengeluaran",
-      },
       dataType: "JSON",
-
+      data: { perintah: "select", query: "SELECT * FROM tb_pemasukan" },
       success: function (response) {
         $.each(response, function (indexInArray, valueOfElement) {
-          pengeluarans = pengeluarans + Number(valueOfElement.jumlah);
-
+          balance = balance + Number(valueOfElement.jumlah);
           $("tbody").append(`
-          <tr>
-              <td>${indexInArray + 1}</td>
-              <td>${valueOfElement.tanggal}</td>
-              <td>Rp.${new Intl.NumberFormat().format(valueOfElement.jumlah)}</td>
-              <td>${valueOfElement.keterangan}</td>
-              <td>
-              <button class='btn btn-sm btn-primary' data-tanggal='${valueOfElement.id}' data-id='${valueOfElement.id}' data-sumber='${valueOfElement.sumber}' data-jumlah='${valueOfElement.id}'>Edit</button>
-  
-              <button onclick='hapus(this)' class='btn  btn-sm btn-danger' data-id='${valueOfElement.id}'>Hapus</button>
-              </td>
-          </tr>
-          `);
-        });
-        $("#balance").text(`Rp.${new Intl.NumberFormat().format(pengeluarans)}`);
+        <tr>
+            <td>${indexInArray + 1}</td>
+            <td>${valueOfElement.tanggal}</td>
+            <td>Rp.${new Intl.NumberFormat().format(valueOfElement.jumlah)}</td>
+            <td>${valueOfElement.sumber}</td>
+            <td>
+            <button class='btn btn-sm btn-primary' data-tanggal='${valueOfElement.id}' data-id='${valueOfElement.id}' data-sumber='${valueOfElement.sumber}' data-jumlah='${valueOfElement.id}'>Edit</button>
 
-        $("#terbilang").text(pembilang(pengeluarans));
+            <button onclick="hapus(this)" class='btn  btn-sm btn-danger' data-id='${valueOfElement.id}'>Hapus</button>
+            </td>
+        </tr>
+        `);
+        });
+
+        $("#balance").text(`Rp.${new Intl.NumberFormat().format(balance)}`);
+        $(".table").dataTable({
+          dom: "Bfltrip",
+          retrieve: true,
+
+          buttons: [
+            {
+              extend: "print",
+              text: "Cetak",
+            },
+            {
+              extend: "excel",
+              text: "Export Excel",
+            },
+          ],
+          fixedHeader: true,
+        });
+
+        $("#terbilang").text(pembilang(balance));
       },
     });
   }
+
   load_data();
 
   function save_data() {
     tgl = $("#tanggal").val();
-    keterangan = $("#keterangan").val();
+    keterangan = $("#sumber").val();
     jumlah = $("#jumlah").val();
-    que = `INSERT INTO tb_pengeluaran VALUES(NULL,'${tgl}','${jumlah}','${keterangan}')`;
+    que = `INSERT INTO tb_pemasukan VALUES(NULL,'${tgl}','${jumlah}','${keterangan}')`;
 
     $.ajax({
       type: "GET",
@@ -93,13 +111,15 @@
       },
       dataType: "JSON",
       success: function (response) {
+        $("tbody").html("");
         alert(response);
-        load_data();
       },
     });
+
+    load_data();
   }
   function hapus(ele) {
-    que = `DELETE FROM tb_pengeluaran WHERE id='${$(ele).attr("data-id")}'`;
+    que = `DELETE FROM tb_pemasukan WHERE id='${$(ele).attr("data-id")}'`;
 
     $.ajax({
       type: "GET",
