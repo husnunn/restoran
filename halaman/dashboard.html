@@ -49,21 +49,45 @@
     <div class="card">
       <div class="card-header">Statistik Booking</div>
       <div class="card-body p-1">
-        <div id="chartbook"></div>
+        <canvas height="127px" id="chartbook"></canvas>
       </div>
     </div>
   </div>
 </div>
+
 <div class="row">
-  <div class="col-sm-5">
-    <div class="card">
+  <div class="col-sm-4">
+    <div class="card h-100">
       <div class="card-header">Rate Menu Teratas</div>
       <div class="card-body p-1">
-        <div id="chart"></div>
+        <canvas height="100px" id="chart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-8">
+    <div class="card h-100">
+      <div class="card-header">5 Order Terakhir</div>
+
+      <div class="card-body p-2">
+        <table class="table table-striped">
+          <thead>
+            <th>#</th>
+            <th>Tanggal</th>
+            <th>Kode Order</th>
+            <th>Meja</th>
+            <th>Jumlah</th>
+            <th>Total Harga</th>
+            <th>Diskon</th>
+            <th>Pendapatan</th>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </div>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
   var bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -100,8 +124,6 @@
           query: "SELECT SUM(orders.price) as qty FROM orders JOIN menumakanan ON menumakanan.nama_makanan=orders.item",
         },
         success: function (ss) {
-          console.log();
-
           $("#pendapat").text("Rp." + new Intl.NumberFormat().format(ss[0].qty));
           chart_menu();
         },
@@ -122,44 +144,29 @@
         query: "SELECT SUM(qty) as jumlah, item FROM `orders` GROUP BY item ORDER BY SUM(qty) DESC LIMIT 5",
       },
       success: function (ss) {
-        // Extract labels and values from data
-        chartData = ss;
-
-        // Extract labels and values from data
-        var labels = chartData.map(function (item) {
+        var labels = ss.map(function (item) {
           return item.item;
         });
 
-        var values = chartData.map(function (item) {
+        var values = ss.map(function (item) {
           return parseInt(item.jumlah, 10);
         });
 
-        // Create ApexCharts instance for a donut chart
-        var options = {
-          chart: {
-            type: "donut",
-          },
-          series: values,
-          labels: labels,
-          responsive: [
-            {
-              breakpoint: 480,
-              options: {
-                chart: {
-                  width: 50,
-                },
-                legend: {
-                  position: "bottom",
-                },
+        var ctx = document.getElementById("chart").getContext("2d");
+
+        var myChart = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                data: values,
+                backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#8A2BE2", "#00FF7F"],
               },
-            },
-          ],
-        };
+            ],
+          },
+        });
 
-        var chart = new ApexCharts(document.querySelector("#chart"), options);
-
-        // Render the chart
-        chart.render();
         booking_chart();
       },
     });
@@ -174,39 +181,68 @@
         query: "SELECT COUNT(id_table) as jumlahbooking, tanggal FROM `tb_restoran` GROUP BY DAY(tanggal)",
       },
       success: function (ss) {
-        chartData = ss;
-
-        // Extract labels and values from data
-        var labels = chartData.map(function (item) {
+        var labels = ss.map(function (item) {
           return item.tanggal;
         });
 
-        var values = chartData.map(function (item) {
+        var values = ss.map(function (item) {
           return parseInt(item.jumlahbooking, 10);
         });
 
-        // Create ApexCharts instance for an area chart
-        var options = {
-          chart: {
-            type: "area",
-            height: "275px",
+        var ctx = document.getElementById("chartbook").getContext("2d");
+
+        var myChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Jumlah Booking",
+                data: values,
+                borderColor: "rgba(255, 155, 0, 1.2)",
+
+                fill: true,
+                tension: 0.5,
+
+                backgroundColor: "rgba(255, 155, 0, 0.3)",
+              },
+            ],
           },
-          series: [
-            {
-              name: "Jumlah Booking",
-              data: values,
+          options: {
+            scales: {
+              y: {
+                beginAtZero: false,
+              },
             },
-          ],
-          xaxis: {
-            categories: labels,
           },
-        };
-
-        var chart = new ApexCharts(document.querySelector("#chartbook"), options);
-
-        // Render the chart
-        chart.render();
+        });
       },
     });
   }
+</script>
+<script>
+  $(document).ready(function () {
+    $.ajax({
+      type: "GET",
+      url: "https://informatikaunwaha.com/restaurant/api_sulton2/api.php/all",
+      dataType: "JSON",
+      success: function (response) {
+        for (let index = 0; index < 5; index++) {
+          const element = response.data[index];
+          $("tbody").append(`
+            <tr>
+              <td>${index + 1}</td>
+              <td>${element.tgl_transaksi}</td>
+              <td>${element.kodeorder}</td>
+              <td>${element.meja}</td>
+              <td>${element.totalpesanan} Items</td>
+              <td>Rp.${new Intl.NumberFormat().format(element.hargatotal)}</td>
+              <td>${element.diskon}%</td>
+              <td>Rp.${new Intl.NumberFormat().format(element.pendapatan)}</td>
+            </tr>
+          `);
+        }
+      },
+    });
+  });
 </script>
