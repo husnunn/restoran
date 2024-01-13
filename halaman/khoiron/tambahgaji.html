@@ -1,0 +1,97 @@
+<div class="mb-3">
+  <label class="form-label" for="tanggal">Tanggal:</label>
+  <input type="date" class="form-control" id="tanggal" name="tanggal" required />
+</div>
+
+<div class="mb-3">
+  <label class="form-label" for="nama_karyawan">Kode Karyawan:</label>
+  <select id="kode_karyawan" class="kode_karyawan form-control w-100" name="state">
+    <option value="">Kode</option>
+  </select>
+</div>
+
+<div class="mb-3">
+  <label class="form-label" for="jabatan">Jabatan:</label>
+  <input type="text" class="form-control" id="jabatan" name="jabatan" required />
+</div>
+
+<div class="mb-3">
+  <label class="form-label" for="kehadiran">Kehadiran:</label>
+  <input type="number" oninput="hitung_gaji()" class="form-control" id="kehadiran" name="kehadiran" required />
+</div>
+<div class="mb-3">
+  <label class="form-label" for="gaji_diterima">Gaji DitJabatan (Rp):</label>
+  <input type="text" value="3000000" disabled class="form-control" id="gaji_jabatan" name="gaji_jabatan" required />
+</div>
+
+<div class="mb-3">
+  <label class="form-label" for="gaji_diterima">Gaji Diterima (Rp):</label>
+  <input type="text" value="0" disabled class="form-control" id="gaji_diterima" name="gaji_diterima" required />
+</div>
+
+<button type="submit" onclick="simpan_gaji()" class="btn btn-primary">Tambah Penggajian</button>
+
+<script>
+  var array_kar = [];
+
+  function load_data() {
+    $.ajax({
+      type: "GET",
+      url: "https://informatikaunwaha.com/restaurant/api_khairan/get_api.php?command=joinkaryawan",
+      dataType: "JSON",
+      success: function (response) {
+        $.each(response.items, function (indexInArray, valueOfElement) {
+          $(".kode_karyawan").append(`<option value="${valueOfElement["kode_karyawan"]}" data-gaji="${valueOfElement["gaji"]}" data-jabatan="${valueOfElement["keterangan"]}">${valueOfElement["kode_karyawan"]} - ${valueOfElement["nama_karyawan"]}</option>`);
+        });
+        $(".kode_karyawan").select2();
+      },
+    });
+  }
+
+  load_data();
+  function hitung_gaji() {
+    var gaji = document.getElementById("gaji_jabatan").value;
+    console.log(gaji);
+
+    var perhari = gaji / 30;
+    console.log(perhari);
+
+    var real_gaji = perhari * document.getElementById("kehadiran").value;
+    console.log(real_gaji);
+
+    document.getElementById("gaji_diterima").value = real_gaji.toFixed(0);
+  }
+
+  function simpan_gaji() {
+    var data_gaji = {
+      typedata: "gaji",
+      tanggal: $("#tanggal").val(),
+      kode_karyawan: $("#kode_karyawan").val(),
+      tanggal: $("#tanggal").val(),
+      kehadiran: $("#kehadiran").val(),
+      gaji_diterima: $("#gaji_diterima").val(),
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "https://informatikaunwaha.com/restaurant/api_khairan/post_api.php",
+      data: data_gaji,
+      dataType: "JSON",
+      success: function (response) {},
+    });
+  }
+</script>
+<script>
+  $(document).ready(function () {
+    $(".kode_karyawan").change(function () {
+      var selectedOption = $(".kode_karyawan option:selected");
+      var gaji = selectedOption.data("gaji");
+      var jabatan = selectedOption.data("jabatan");
+
+      $("#jabatan").val(jabatan);
+      $("#gaji_jabatan").val(gaji);
+
+      console.log("Jabatan: " + jabatan);
+    });
+  });
+</script>

@@ -1,0 +1,110 @@
+<div class="card">
+  <div class="card-header"></div>
+  <div class="card-body">
+    <div class="form-group mb-3">
+      <label for="nama_jabatan">Nama Jabatan:</label>
+      <input type="hidden" class="form-control" id="id_jabatan" />
+
+      <input type="text" class="form-control" id="nama_jabatan" name="nama_jabatan" required />
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="gaji">Gaji (Rp):</label>
+      <input type="text" class="form-control" id="gaji" name="gaji" required />
+    </div>
+
+    <button id="btnAdd" class="btn btn-primary">Tambah Jabatan</button>
+    <button id="btnCancel" class="btn btn-danger d-none">Batal</button>
+    <button id="btnUpdate" class="btn btn-success d-none">Update Jabatan</button>
+  </div>
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Nama Jabatan</th>
+      <th>Gaji</th>
+      <th>aksi</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+<script>
+  // $("table").dataTable();
+</script>
+<script>
+  function load_jabatan() {
+    $.ajax({
+      type: "GET",
+      url: "https://informatikaunwaha.com/restaurant/api_khairan/get_api.php?command=get_jabatan",
+      dataType: "JSON",
+      success: function (response) {
+        $("tbody").empty();
+        $.each(response.items, function (indexInArray, valueOfElement) {
+          $("tbody").append(`
+        <tr>
+            <td>${indexInArray + 1}</td>
+            <td>${valueOfElement.keterangan}</td>
+            <td>${valueOfElement.gaji}</td>
+            <td>
+            <button class='btn btn-primary btn-sm' onclick="ambil(this)" data-gaji='${valueOfElement.gaji}' data-keterangan='${valueOfElement.keterangan}' data-idjabatan='${valueOfElement.id_jabatan}'>Edit</button>
+            <button class='btn btn-danger btn-sm'  data-idjabatan='${valueOfElement.id_jabatan}'>Hapus</button>
+
+            </td>
+        </tr>
+         `);
+        });
+        $("table").dataTable();
+      },
+    });
+  }
+
+  function ambil(elemen) {
+    $("#id_jabatan").val($(elemen).attr("data-idjabatan"));
+    $("#nama_jabatan").val($(elemen).attr("data-keterangan"));
+    $("#gaji").val($(elemen).attr("data-gaji"));
+
+    $("#btnUpdate").removeClass("d-none");
+    $("#btnCancel").removeClass("d-none");
+    $("#btnAdd").addClass("d-none");
+  }
+
+  $("#btnAdd").click(function () {
+    var dataform = {
+      typedata: "jabatan",
+      ket: $("#nama_jabatan").val(),
+      gj: $("#gaji").val(),
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "https://informatikaunwaha.com/restaurant/api_khairan/post_api.php",
+      data: dataform,
+      dataType: "JSON",
+      success: function (response) {
+        alert(response);
+        reset();
+        load_jabatan();
+      },
+    });
+  });
+
+  load_jabatan();
+  $("#btnCancel").click(function () {
+    reset();
+  });
+  $("#btnUpdate").click(function () {
+    reset();
+  });
+
+  function reset() {
+    $("#id_jabatan").val("");
+    $("#nama_jabatan").val("");
+    $("#gaji").val("");
+
+    $("#btnUpdate").addClass("d-none");
+    $("#btnCancel").addClass("d-none");
+    $("#btnAdd").removeClass("d-none");
+  }
+</script>

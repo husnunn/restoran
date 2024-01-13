@@ -1,0 +1,85 @@
+<div class="form-group mb-3">
+  <label for="nama_karyawan">Nama Karyawan:</label>
+  <input type="text" class="form-control" id="nama_karyawan" name="nama_karyawan" required />
+</div>
+
+<div class="form-group mb-3">
+  <label>Jenis Kelamin:</label>
+  <div class="form-check">
+    <input type="radio" class="form-check-input" id="laki_laki" name="jenis_kelamin" value="Laki-laki" checked />
+    <label class="form-check-label" for="laki_laki">Laki-laki</label>
+  </div>
+  <div class="form-check">
+    <input type="radio" class="form-check-input" id="perempuan" name="jenis_kelamin" value="Perempuan" />
+    <label class="form-check-label" for="perempuan">Perempuan</label>
+  </div>
+</div>
+
+<div class="form-group mb-3">
+  <label for="alamat">Alamat:</label>
+  <textarea class="form-control" id="alamat" name="alamat" required></textarea>
+</div>
+
+<div class="form-group mb-3">
+  <label for="no_hp">Nomor HP:</label>
+  <input type="text" class="form-control" id="no_hp" name="no_hp" required />
+</div>
+
+<div class="form-group mb-3">
+  <label for="email">Email:</label>
+  <input type="email" class="form-control" id="email" name="email" required />
+</div>
+
+<div class="form-group mb-3">
+  <label for="jabatan">Jabatan:</label>
+  <select class="form-control" id="jabatan" name="jabatan"></select>
+</div>
+
+<button id="btnAdd" class="btn btn-primary">Tambah Karyawan</button>
+
+<script>
+  function load_jabatan() {
+    $.ajax({
+      type: "GET",
+      url: "https://informatikaunwaha.com/restaurant/api_khairan/get_api.php?command=get_jabatan",
+      dataType: "JSON",
+      success: function (response) {
+        $("select").empty();
+        $.each(response.items, function (indexInArray, valueOfElement) {
+          $("select").append(`
+       
+            <option value="${valueOfElement.id_jabatan}">${valueOfElement.keterangan}</option>
+         
+         `);
+        });
+        $("table").dataTable();
+      },
+    });
+  }
+
+  load_jabatan();
+</script>
+
+<script>
+  $("#btnAdd").click(function () {
+    var dataform = {
+      typedata: "karyawan",
+      nama_karyawan: $("#nama_karyawan").val(),
+      jabatan: $("#jabatan").val(),
+      email: $("#email").val(),
+      no_hp: $("#no_hp").val(),
+      alamat: $("#alamat").val(),
+      jenis_kelamin: $("input[name='jenis_kelamin']:checked").val(),
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "https://informatikaunwaha.com/restaurant/api_khairan/post_api.php",
+      data: dataform,
+      dataType: "JSON",
+      success: function (response) {
+        alert(response);
+      },
+    });
+  });
+</script>

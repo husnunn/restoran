@@ -1,0 +1,36 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Tanggal</th>
+      <th>Nama Karyawan</th>
+      <th>Jabatan</th>
+      <th>Kehadiran</th>
+      <th>Gaji Diterima (Rp)</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+<script>
+  $.ajax({
+    type: "GET",
+    url: "https://informatikaunwaha.com/restaurant/api_khairan/get_api.php?command=joingajikaryawan",
+    dataType: "JSON",
+    success: function (response) {
+      $.each(response.items, function (indexInArray, valueOfElement) {
+        $("tbody").append(`
+             
+             <tr>
+      <td>${indexInArray + 1}</td>
+      <td>${valueOfElement.tanggal}</td>
+      <td>${valueOfElement.nama_karyawan}</td>
+      <td>${valueOfElement.keterangan}</td>
+      <td>${valueOfElement.kehadiran}</td>
+      <td>${valueOfElement.gaji_diterima}</td>
+    </tr>
+             `);
+      });
+      $("table").dataTable();
+    },
+  });
+</script>
