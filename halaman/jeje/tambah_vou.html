@@ -1,0 +1,35 @@
+<div class="card">
+  <div class="card-body">
+    <div class="mb-3">
+      <label for="" class="form-label">KODE VOUCHER</label>
+      <input type="text" name="" id="kode_voucher" class="form-control" placeholder="" aria-describedby="helpId" />
+    </div>
+    <div class="mb-3">
+      <label for="" class="form-label">Potongan</label>
+      <input type="text" name="" id="potongan" class="form-control" placeholder="" aria-describedby="helpId" />
+    </div>
+    <div class="mb-3">
+      <label for="" class="form-label">Keterangan</label>
+      <input type="text" name="" id="keterangan" class="form-control" placeholder="" aria-describedby="helpId" />
+    </div>
+    <div class="mb-3">
+      <button onclick="simpan_voucher()">Simpan Voucher</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function simpan_voucher() {
+    $.ajax({
+      type: "POST",
+      url: "https://informatikaunwaha.com/restaurant/api_ajeng/add_vou.php",
+      data: {
+        kode_voucher: $("#kode_voucher").val(),
+        potongan: $("#potongan").val(),
+        keterangan: $("#keterangan").val(),
+      },
+      dataType: "dataType",
+      success: function (response) {},
+    });
+  }
+</script>

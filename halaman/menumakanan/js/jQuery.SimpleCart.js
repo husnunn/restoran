@@ -306,6 +306,7 @@ function proses_pesanan() {
     },
   });
   masukkan_laporan(dataLaporan);
+  alert("Ord");
 }
 
 function masukkan_laporan(arrays) {
@@ -317,22 +318,17 @@ function masukkan_laporan(arrays) {
     dataType: "JSON",
     success: function (response) {
       alert(response.status);
-      if ($("#kodevoucher").val() > 0) {
-        $.ajax({
-          type: "GET",
-          url: "https://informatikaunwaha.com/restaurant/api_ajeng/update_statusvou.php?kodevoucher=" + $("#kodevoucher").val(),
-          dataType: "JSON",
-          success: function (response) {
-            localStorage.setItem("shoppingCart", "");
-            $("#kodevoucher").val("");
-            window.location.reload();
-          },
-        });
-      } else {
-        localStorage.setItem("shoppingCart", "");
-        $("#kodevoucher").val("");
-        window.location.reload();
-      }
+      $.ajax({
+        type: "GET",
+        url: "https://informatikaunwaha.com/restaurant/api_ajeng/update_statusvou.php?kodevoucher=" + $("#kodevoucher").val(),
+        dataType: "JSON",
+        success: function (response) {
+          localStorage.setItem("shoppingCart", "");
+          $("#kodevoucher").val("");
+
+          alert(JSON.stringify(arrays));
+        },
+      });
     },
   });
 }
