@@ -111,11 +111,11 @@
             // });
             console.log(response);
             // Reset form setelah selesai
-            kosongForm();
+            ambildatatamu()
           },
           error: function (error) {
             console.log("Error: ", error.responseText);
-            swal({
+            Swal.fire({
               title: "Gagal",
               text: "Terjadi Kesalahan Harap Coba Lagi",
               icon: "error",
@@ -200,14 +200,16 @@
       data: { id: id, kolom: "id" },
       dataType: "JSON",
       success: function (response) {
-        swal({
+        Swal.fire({
           title: "Berhasil",
           text: "Data Berhasil Dihapus",
           icon: "success",
         });
+
+        ambildatatamu()
       },
       error: function (error) {
-        swal({
+        Swal.fire({
           title: "Gagal",
           text: "Terjadi Kesalahan Harap Coba Lagi",
           icon: "error",
