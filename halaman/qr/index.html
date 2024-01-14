@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Blank</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous" />
+    <!-- Bootstrap Icon - short-cut(bina-bsicon) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" />
+
+    <!-- Datatable -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.13.1/r-2.4.0/datatables.min.css" />
+    <!-- Select2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    <!-- JQUERY -->
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  </head>
+
+  <body>
+    <div class="container p-3">
+      <h2>Form Komplain & Saran</h2>
+
+      <div class="form-group mb-3">
+        <label class="mb-2" for="kategori">Kategori </label>
+        <select class="form-control" id="jenis" name="jenis" required>
+          <option value="2">Saran</option>
+          <option value="1">Komplain</option>
+        </select>
+      </div>
+
+      <div class="form-group mb-3">
+        <label class="mb-2" for="aduan">Aduan:</label>
+        <textarea class="form-control" id="keterangan" name="keterangan" rows="4" required></textarea>
+      </div>
+
+      <button type="submit" onclick="simpan()" class="btn btn-primary">Submit Aduan</button>
+    </div>
+    <script>
+      function simpan() {
+        Swal.fire({
+          title: "Konfirmasi",
+          text: "Apakah Sudah Benar Informasi Yang Di berikan ?",
+          icon: "question",
+          confirmButtonText: "Oke",
+          showCancelButton: true,
+          cancelButtonText: "Batal",
+        }).then((result) => {
+          if (result["isConfirmed"]) {
+            tambah();
+          }
+        });
+      }
+    </script>
+
+    <script>
+      function edit_data(datas, jenisdata) {
+        console.log(datas);
+        $.ajax({
+          type: "POST",
+          url: "https://tugasapi.informatikaunwaha.com/baihaqi/api/apiedit.php",
+          data: datas,
+          dataType: "JSON",
+          success: function (response) {
+            sukses("success", "Berhasil Mengupdate");
+            $("tbody").empty();
+            ambil_laporan(jenisdata);
+          },
+        });
+      }
+
+      function ambil_laporan(jeniss) {
+        $.ajax({
+          type: "GET",
+          url: "https://tugasapi.informatikaunwaha.com/baihaqi/api/api.php",
+          data: {
+            jenis: jeniss,
+          },
+          dataType: "JSON",
+          success: function (response) {
+            var dataresponse = response.data;
+
+            $.each(dataresponse, function (indexArray, isidariArray) {
+              var elemen_tr = `
+          <tr>
+                <td >${indexArray + 1}</td>
+                <td >${isidariArray.tanggal}</td>
+                <td dataid="${isidariArray.id}" datap="${isidariArray.keterangan}" >${isidariArray.keterangan}</td>
+                <td >${konvert_status(isidariArray.status)}</td>
+                
+                <td>
+                 <a href="#" class="btn btn-sm btn-warning rounded-2 me-2" onclick="edit(this)">edit</a>
+                 <a href="#" idp="${isidariArray.id}" class="btn btn-sm btn-danger rounded-2 me-2" onclick="confirm_delete(this)">hapus</a>
+                </td>       
+              </tr>
+          `;
+
+              $(".table tbody").append(elemen_tr);
+            });
+
+            $("table").dataTable();
+          },
+        });
+      }
+      function konvert_status(status) {
+        if (status == 0) {
+          return `<span class="badge bg-danger">Belum Di Tangani</span>`;
+        } else if (status == 1) {
+          return `<span class="badge bg-success">Sudah Di Tangani</span>`;
+        } else if (status == 2) {
+          return `<span class="badge bg-warning">Di Pertimbangkan</span>`;
+        } else if (status == 3) {
+          return `<span class="badge bg-secondary">Di Tolak</span>`;
+        }
+      }
+      function syncOfflineData() {
+        var offlineData = JSON.parse(localStorage.getItem("insert")) || [];
+
+        if (offlineData.length > 0) {
+          offlineData.forEach(function (record) {
+            $.ajax({
+              type: "POST",
+              url: "https://tugasapi.informatikaunwaha.com/baihaqi/api/apitambah.php",
+              data: record,
+              dataType: "JSON",
+              success: function (response) {
+                console.log("Offline data synced successfully:", response);
+              },
+              error: function (error) {
+                console.error("Error syncing offline data:", error);
+              },
+            });
+          });
+
+          localStorage.removeItem("insert");
+        }
+      }
+      function tambah() {
+        var jenisv = $("#jenis").val();
+        var keteranganv = $("#keterangan").val();
+
+        if (navigator.onLine) {
+          $.ajax({
+            type: "POST",
+            url: "https://tugasapi.informatikaunwaha.com/baihaqi/api/apitambah.php",
+            data: {
+              jenis: jenisv,
+              keterangan: keteranganv,
+            },
+            dataType: "JSON",
+            success: function (response) {
+              console.log("Data submitted successfully:", response);
+              $("#keterangan").val("");
+              window.location.reload();
+            },
+            error: function (error) {
+              $("#keterangan").val("");
+              console.error("Error:", error);
+            },
+          });
+        } else {
+          var offlineData = JSON.parse(localStorage.getItem("insert")) || [];
+
+          if (!Array.isArray(offlineData)) {
+            offlineData = [];
+          }
+
+          offlineData.push({ jenis: jenisv, keterangan: keteranganv });
+          localStorage.setItem("insert", JSON.stringify(offlineData));
+        }
+      }
+
+      function tambah_aduan() {
+        window.location.reload();
+      }
+    </script>
+
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <!-- Datatable -->
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/r-2.4.0/datatables.min.js"></script>
+    <!-- Sweet Alert2 -->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+  </body>
+</html>

@@ -1,7 +1,22 @@
 <div class="row" id="list-pesanan"></div>
 <script>
+  function konfersipesanan(statuss) {
+    if (statuss == "pending") {
+      return "text-dark";
+    } else {
+      return "text-muted";
+    }
+  }
+  function konfersipesananbtn(statuss) {
+    if (statuss == "pending") {
+      return "d-inline";
+    } else {
+      return "d-none";
+    }
+  }
+
   function load_dapur() {
-    $("#list-pesanan").html('');
+    $("#list-pesanan").html("");
     var gg = [];
     $.ajax({
       type: "GET",
@@ -14,37 +29,40 @@
         gg = response;
         var uniqueCodes = [];
         var meja = [];
+        var statuspesanan = [];
 
         // Memetakan pesanan ke dalam kode unik
         $.each(dataInvoice, function (index, order) {
           if ($.inArray(order.kodeorder, uniqueCodes) === -1) {
             uniqueCodes.push(order.kodeorder);
             meja.push(order.meja);
+            statuspesanan.push(order.status);
           }
         });
 
         var htmlk = ``;
         // Membuat div untuk setiap pesanan dengan kode unik
-        $.each(uniqueCodes, function (index, uniqueCode) {
+        $.each(uniqueCodes, function (indexs, uniqueCode) {
           htmlk += `
              <div class='col-4  mb-2'>
-             <div class='card h-100'>
+             <div class='card ${konfersipesanan(statuspesanan[indexs])} h-100'>
                 <div class='card-header'>
                Kode Order : ${uniqueCode}
                <p class='mb-0'>
-                Nomor MEJA : ${meja[index]}
+                Nomor MEJA : ${meja[indexs]}
                 </p>
                </div>
-             <div class='card-body p-1'>
+             <div class='card-body p-1'>`;
+          htmlk += `
 
-             <ul style='max-height:300px;overflow-y:auto' class='list-group rounded-0 border-0' id='unique_${uniqueCode}'>`;
+             <ul style='max-height:300px;overflow-y:auto' class='list-group rounded-0 border-0 ' id='unique_${uniqueCode}'>`;
 
           $.each(dataInvoice, function (index, order) {
             if (order.kodeorder === uniqueCode) {
-              htmlk += `<li class='list-group-item border-0 border-bottom py-2' >
+              htmlk += `<li class='list-group-item border-0 border-bottom py-2  ${konfersipesanan(statuspesanan[indexs])}' >
                    <div class='row'>
                        <div class='col-10'>${order.item} </div>
-                       <div class='col-2'><div class='rounded-1 text-danger fw-bold d-flex justify-content-center align-items-center' style='width:30px;'>${order.qty}</div></div>
+                       <div class='col-2'><div class='rounded-1 text-danger   ${konfersipesanan(statuspesanan[indexs])} fw-bold d-flex justify-content-center align-items-center' style='width:30px;'>${order.qty}</div></div>
                      
                        </div>                    
                    </li>`;
@@ -52,8 +70,8 @@
           });
           htmlk += `</ul>
                </div>
-               <div class='card-footer d-none'>
-                   <button class=' btn w-100 btn-success rounded-1' data-idorder='${uniqueCode}'>Pesanan Ready</button>
+               <div class='card-footer'>
+                   <button data-unique='${uniqueCode}' onclick='update_status(this)' class=' btn w-100 btn-success rounded-1 ${konfersipesananbtn(statuspesanan[indexs])}' data-idorder='${uniqueCode}'>Pesanan Siap</button>
 
                    </div>
                </div>
@@ -74,9 +92,32 @@
   var pusher = new Pusher("1bedf4803951d8cfc77d", {
     cluster: "ap1",
   });
+  var identifier = "dapur";
 
   var channel = pusher.subscribe("my-channel");
   channel.bind("my-event", function (data) {
-    load_dapur();
+    if (identifier == "dapur") {
+      alert("Pesanan Masuk");
+      load_dapur();
+    }
   });
+</script>
+
+<script>
+  function update_status(elem) {
+    var kps = $(elem).attr("data-unique");
+
+    $.ajax({
+      type: "GET",
+      url: "https://informatikaunwaha.com/restaurant/api_sevi/update_dapur.php",
+      data: {
+        kodepesanan: kps,
+      },
+      dataType: "json",
+      success: function (response) {
+        alert(response);
+        load_dapur();
+      },
+    });
+  }
 </script>

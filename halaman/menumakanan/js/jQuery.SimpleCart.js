@@ -284,7 +284,7 @@ function proses_pesanan() {
     potonganVoucher: pVoucher,
     hargaDanPotongan: totalHargaDiskon,
   };
-
+  var identifier = "kasir";
   // // Sending a POST request to the server
   $.ajax({
     type: "POST",
@@ -317,7 +317,7 @@ function masukkan_laporan(arrays) {
     dataType: "JSON",
     success: function (response) {
       alert(response.status);
-      if ($("#kodevoucher").val() >0) {
+      if ($("#kodevoucher").val() > 0) {
         $.ajax({
           type: "GET",
           url: "https://informatikaunwaha.com/restaurant/api_ajeng/update_statusvou.php?kodevoucher=" + $("#kodevoucher").val(),
