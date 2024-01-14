@@ -2,7 +2,7 @@
   <div class="card-body">
     <div class="mb-3">
       <label for="" class="form-label">KODE VOUCHER</label>
-      <input type="text" name="" id="kode_voucher" class="form-control" placeholder="" aria-describedby="helpId" />
+      <input type="text" disabled name="" id="kode_voucher" class="form-control" placeholder="" aria-describedby="helpId" />
     </div>
     <div class="mb-3">
       <label for="" class="form-label">Potongan</label>
@@ -10,7 +10,7 @@
     </div>
     <div class="mb-3">
       <label for="" class="form-label">Keterangan</label>
-      <input type="text" name="" id="keterangan" class="form-control" placeholder="" aria-describedby="helpId" />
+      <input type="text" name="" value="-" id="keterangan" class="form-control" placeholder="" aria-describedby="helpId" />
     </div>
     <div class="mb-3">
       <button onclick="simpan_voucher()">Simpan Voucher</button>
@@ -19,6 +19,9 @@
 </div>
 
 <script>
+  var randomKode = Math.floor(Math.random * 4000);
+  $("#kode_voucher").val(randomKode);
+
   function simpan_voucher() {
     $.ajax({
       type: "POST",
@@ -28,8 +31,14 @@
         potongan: $("#potongan").val(),
         keterangan: $("#keterangan").val(),
       },
-      dataType: "dataType",
-      success: function (response) {},
+      dataType: "JSON",
+      success: function (response) {
+        alert("Sukses Menambah Voucher");
+        var randomKode = Math.floor(Math.random * 4000);
+        $("#kode_voucher").val(randomKode);
+        $("#potongan").val("");
+        $("#keterangan").val("-");
+      },
     });
   }
 </script>
